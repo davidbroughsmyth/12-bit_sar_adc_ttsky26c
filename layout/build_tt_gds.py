@@ -100,7 +100,9 @@ class OrthoRouter:
         self.cell = cell
         self.jog_y = 196.0
         self.east_x = 311.2
-        self.pwr_y = 8.0
+        self.pwr_y = 4.0
+        self.bot_y = 6.0
+        self.west_x = 10.6
 
     def alloc_jog(self) -> float:
         y = self.jog_y
@@ -118,6 +120,31 @@ class OrthoRouter:
         y = self.pwr_y
         self.pwr_y += 0.8
         return y
+
+    def alloc_bot(self) -> float:
+        y = self.bot_y
+        self.bot_y += 2.0
+        return y
+
+    def alloc_west(self) -> float:
+        x = self.west_x
+        self.west_x += 1.4
+        return x
+
+    def connect_south_analog(self, x0, y0, x1, y1, start="met3", end="met1"):
+        """ua[0]/ua[1]: unique bottom Y + west X so the two analog pads never share a jog."""
+        c = self.cell
+        yj = self.alloc_bot()
+        xw = self.alloc_west()
+        via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
+        seg_v(c, x0, y0, yj, "met3")
+        via_stack(c, x0, yj, "met3", "met2")
+        seg_h(c, yj, x0, xw, "met2")
+        via_stack(c, xw, yj, "met2", "met3")
+        seg_v(c, xw, yj, y1, "met3")
+        via_stack(c, xw, y1, "met3", "met2")
+        seg_h(c, y1, xw, x1, "met2")
+        via_stack(c, x1, y1, "met2", end)
 
     def connect(self, x0, y0, x1, y1, start="met3", end="met3"):
         """Orthogonal path: met3 verticals + met2 horizontals + vias at corners."""
@@ -329,8 +356,10 @@ def main() -> int:
         rt.connect(x0, y0, stripe_x, yb, start="met3", end="met3")
         via_stack(cell, stripe_x, yb, "met3", "met4")
 
-    hook("ua[0]", axy("vin_ecg"), "met1")
-    hook("ua[1]", axy("vref"), "met1")
+    x0, y0 = pin_met3["ua[0]"]
+    rt.connect_south_analog(x0, y0, *axy("vin_ecg"), start="met3", end="met1")
+    x1, y1 = pin_met3["ua[1]"]
+    rt.connect_south_analog(x1, y1, *axy("vref"), start="met3", end="met1")
     hook("clk", dxy("clk")[:2], dxy("clk")[2])
     hook("rst_n", dxy("rst_n")[:2], dxy("rst_n")[2])
     hook("ena", dxy("ena")[:2], dxy("ena")[2])
