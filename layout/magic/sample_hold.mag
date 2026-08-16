@@ -1,0 +1,55 @@
+magic
+tech sky130A
+magscale 1 2
+timestamp 1786860556
+<< checkpaint >>
+rect 1845 7511 4981 7759
+rect 275 6959 4981 7511
+rect 275 675 6181 6959
+rect 3045 645 6181 675
+rect 6340 340 13232 6940
+<< metal1 >>
+rect 0 8400 14000 8640
+rect 11600 8000 13600 8400
+rect 100 5200 800 6000
+rect 100 1840 800 2400
+rect 100 1600 7200 1840
+rect 12400 1600 13600 2400
+rect 100 240 1600 400
+rect 0 0 14000 240
+<< metal2 >>
+rect 4000 1600 10000 1800
+<< metal3 >>
+rect 7200 1600 11600 5600
+use sky130_fd_pr__cap_mim_m3_1_BNHTNG  xch
+timestamp 0
+transform 1 0 9786 0 1 3640
+box -2186 -2040 2186 2040
+use sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N  xinvn
+timestamp 0
+transform 1 0 1813 0 1 5893
+box -278 -358 278 358
+use sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6  xinvp
+timestamp 0
+transform 1 0 3413 0 1 6002
+box -308 -497 308 497
+use sky130_fd_pr__nfet_g5v0d10v5_YNEQJ5  xn
+timestamp 0
+transform 1 0 1813 0 1 2993
+box -278 -1058 278 1058
+use sky130_fd_pr__pfet_g5v0d10v5_KLRLZ5  xp
+timestamp 0
+transform 1 0 4613 0 1 3802
+box -308 -1897 308 1897
+<< labels >>
+flabel metal1 100 1600 800 2400 1 FreeSans 480 0 0 0 vin_ecg
+port 1 n
+flabel metal1 12400 1600 13600 2400 1 FreeSans 480 0 0 0 vhold
+port 2 n
+flabel metal1 100 5200 800 6000 1 FreeSans 480 0 0 0 sample_en
+port 3 n
+flabel metal1 11600 8000 13600 8600 1 FreeSans 480 0 0 0 avdd
+port 4 n
+flabel metal1 100 0 1600 400 1 FreeSans 480 0 0 0 avss
+port 5 n
+<< end >>

@@ -77,68 +77,46 @@ def manhattan(cell, x0, y0, x1, y1, layer="met4", width=0.4):
         add_rect(cell, layer, x1 - pad / 2, y1 - pad / 2, pad, pad)
 
 
-def analog_core(cell, ox, oy):
-    """S/H MIM, poly R-2R, comparator metal. No nwell (nwell.4)."""
-    # S/H hold cap (met3/met4)
-    add_rect(cell, "met3", ox + 12, oy + 68, 16, 16)
-    add_rect(cell, "met4", ox + 12, oy + 68, 16, 16)
-    add_rect(cell, "met1", ox + 2, oy + 74, 14, 0.4)
-    vin = (ox + 4, oy + 74)
-    vhold = (ox + 20, oy + 76)
-
-    # R-2R poly ladder
-    for i in range(12):
-        x = ox + 4 + i * 8
-        add_rect(cell, "poly", x, oy + 8, 8.0, 0.35)
-        add_rect(cell, "li1", x, oy + 7.9, 0.5, 0.55)
-        add_rect(cell, "li1", x + 7.5, oy + 7.9, 0.5, 0.55)
-        add_rect(cell, "met1", x, oy + 18, 1.2, 8)
-        add_rect(cell, "met2", x + 0.4, oy + 18, 0.3, 40)
-    add_rect(cell, "met2", ox + 4, oy + 21.8, 94, 0.4)
-    vref = (ox + 4, oy + 22)
-    vdac = (ox + 96, oy + 22)
-
-    # Comparator abstract (metal only)
-    add_rect(cell, "met1", ox + 112, oy + 56, 24, 20)
-    add_rect(cell, "met2", ox + 112, oy + 56, 0.4, 20)
-    comp = (ox + 134, oy + 66)
-
-    taps = {
-        "vin_ecg": vin,
-        "vhold": vhold,
-        "vref": vref,
-        "vdac": vdac,
-        "comp_p": comp,
-        "sample_en": (ox + 4, oy + 84),
-        "clk_cmp": (ox + 134, oy + 50),
-    }
-    for i in range(12):
-        taps[f"dac[{i}]"] = (ox + 4.4 + i * 8, oy + 50)
-    add_label(cell, "vin_ecg", vin[0], vin[1], "met4.label")
-    add_label(cell, "vref", vref[0], vref[1], "met4.label")
-    add_label(cell, "comp_p", comp[0], comp[1], "met4.label")
-    return taps
+def flatten_gds(path: Path, name: str) -> gdstk.Cell:
+    src = gdstk.read_gds(str(path))
+    top = src.top_level()[0]
+    top.flatten()
+    top.name = name
+    return top
 
 
-def digital_abstract(cell, ox, oy):
-    """Metal abstract for SAR digital (stdcell PnR still TODO)."""
-    w, h = 90.0, 120.0
-    add_rect(cell, "met1", ox, oy, w, 0.5)
-    add_rect(cell, "met1", ox, oy + h, w, 0.5)
-    add_rect(cell, "met2", ox, oy, 0.5, h)
-    add_rect(cell, "met2", ox + w, oy, 0.5, h)
-    taps = {
-        "clk": (ox + 8, oy + h - 4),
-        "rst_n": (ox + 16, oy + h - 4),
-        "ena": (ox + 24, oy + h - 4),
-        "sample_en": (ox + w - 4, oy + 50),
-        "eoc": (ox + w - 4, oy + 44),
-        "comp_p": (ox + 4, oy + 40),
-    }
-    for i in range(12):
-        taps[f"adc[{i}]"] = (ox + w - 4, oy + 8 + i * 8)
-        taps[f"dac[{i}]"] = (ox + 4, oy + 8 + i * 8)
-    return taps
+def labels_of(cell: gdstk.Cell, ox: float, oy: float) -> dict[str, tuple[float, float]]:
+    out = {}
+    for lab in cell.labels:
+        out[lab.text] = (ox + lab.origin[0], oy + lab.origin[1])
+    return out
+
+
+def place_ref(parent: gdstk.Cell, child: gdstk.Cell, ox: float, oy: float) -> dict[str, tuple[float, float]]:
+    parent.add(gdstk.Reference(child, origin=(ox, oy)))
+    return labels_of(child, ox, oy)
+
+
+def find_digital_gds() -> Path | None:
+    runs = ROOT / "layout" / "openlane" / "sar_adc_digital" / "runs"
+    if not runs.exists():
+        return None
+    found = sorted(runs.glob("*/results/final/gds/*.gds"))
+    return found[-1] if found else None
+
+
+def digital_taps_from_gds(cell: gdstk.Cell, ox: float, oy: float) -> dict[str, tuple[float, float]]:
+        names = {}
+        bb = cell.bounding_box()
+        (x0, y0), (x1, y1) = bb if bb else ((0, 0), (0, 0))
+        for lab in cell.labels:
+            x, y = lab.origin[0] + ox, lab.origin[1] + oy
+            lx, ly = lab.origin
+            on_edge = lx <= x0 + 3 or lx >= x1 - 3 or ly <= y0 + 3 or ly >= y1 - 3
+            key = lab.text
+            if on_edge or key not in names:
+                names[key] = (x, y)
+        return names
 
 
 def main() -> int:
@@ -166,8 +144,47 @@ def main() -> int:
         add_label(cell, name, x + 1.0, h / 2, "met4.label")
         lef_extra.append((name, use, x, stripe_y0, x + stripe_w, stripe_y1))
 
-    analog = analog_core(cell, 40, 25)
-    digital = digital_abstract(cell, 200, 40)
+    sh = flatten_gds(ROOT / "layout" / "gds" / "sample_hold_magic.gds", "sample_hold")
+    dac = flatten_gds(ROOT / "layout" / "gds" / "r2r_dac_magic.gds", "r2r_dac")
+    cmp = flatten_gds(ROOT / "layout" / "gds" / "comparator_magic.gds", "comparator")
+    ox_r2r, oy_r2r = 14.0, 16.0
+    ox_sh, oy_sh = 14.0, 112.0
+    ox_cmp, oy_cmp = 90.0, 112.0
+    analog = {}
+    analog.update(place_ref(cell, dac, ox_r2r, oy_r2r))
+    analog.update(place_ref(cell, sh, ox_sh, oy_sh))
+    analog.update(place_ref(cell, cmp, ox_cmp, oy_cmp))
+    analog["vin_ecg"] = analog["vin_ecg"]
+    analog["vhold"] = analog["vhold"]
+    analog["vref"] = analog["vref"]
+    analog["vdac"] = analog.get("vout", analog.get("vhold"))
+    analog["clk_cmp"] = analog["clk"]
+    for i in range(12):
+        analog[f"dac[{i}]"] = analog[f"dac{i}"]
+
+    digital = {}
+    dig_cell = None
+    dig_gds = find_digital_gds()
+    ox_dig, oy_dig = 200.0, 35.0
+    if dig_gds:
+        print("using digital GDS", dig_gds)
+        dsrc = gdstk.read_gds(str(dig_gds))
+        dig_cell = dsrc.top_level()[0]
+        digital = digital_taps_from_gds(dig_cell, ox_dig, oy_dig)
+        cell.add(gdstk.Reference(dig_cell, origin=(ox_dig, oy_dig)))
+    else:
+        print("OpenLane digital GDS missing — placeholder taps at east edge")
+        digital = {
+            "clk": (ox_dig + 8, oy_dig + 140),
+            "rst_n": (ox_dig + 16, oy_dig + 140),
+            "ena": (ox_dig + 24, oy_dig + 140),
+            "sample_en": (ox_dig + 4, oy_dig + 50),
+            "eoc": (ox_dig + 4, oy_dig + 44),
+            "comp_p": (ox_dig + 4, oy_dig + 40),
+        }
+        for i in range(12):
+            digital[f"adc[{i}]"] = (ox_dig + 100, oy_dig + 8 + i * 8)
+            digital[f"dac[{i}]"] = (ox_dig + 4, oy_dig + 8 + i * 8)
 
     for i in range(12):
         manhattan(cell, *analog[f"dac[{i}]"], *digital[f"dac[{i}]"], "met2", 0.3)
@@ -175,6 +192,11 @@ def main() -> int:
     manhattan(cell, *digital["sample_en"], *analog["sample_en"], "met3", 0.6)
     manhattan(cell, *analog["vdac"], *analog["vhold"], "met3", 0.6)
     manhattan(cell, *digital["clk"], *analog["clk_cmp"], "met3", 0.6)
+    manhattan(cell, analog["avdd"][0], analog["avdd"][1], 8.0, analog["avdd"][1], "met4", 0.6)
+    manhattan(cell, analog["avss"][0], analog["avss"][1], 5.0, analog["avss"][1], "met4", 0.6)
+    # Digital 1.8 V / ground straps to TT power (above analog, below top pins)
+    add_rect(cell, "met4", 1.0, 188.0, 308.0, 1.6)
+    add_rect(cell, "met4", 4.0, 182.0, 305.0, 1.6)
 
     pin_boxes = {}
     for p in pins:
@@ -217,8 +239,19 @@ def main() -> int:
     lef_path = ROOT / "lef" / f"{TOP}.lef"
     gds_path.parent.mkdir(parents=True, exist_ok=True)
     lef_path.parent.mkdir(parents=True, exist_ok=True)
+
     lib = gdstk.Library(name=TOP, unit=1e-6, precision=1e-9)
-    lib.add(cell)
+    parts = [cell, sh, dac, cmp]
+    if dig_cell is not None:
+        dlib = gdstk.read_gds(str(dig_gds))
+        parts.extend(dlib.cells)
+        # Re-bind the reference to the cell from this second read
+        cell.references[-1].cell = dlib.top_level()[0]
+    seen = {}
+    for c in parts:
+        if c.name not in seen:
+            seen[c.name] = c
+    lib.add(*seen.values())
     lib.write_gds(str(gds_path))
 
     lines = [
@@ -264,17 +297,14 @@ def main() -> int:
     lvs.write_text(
         "\n".join(
             [
-                "GDS connectivity (precheck pin + analog wiring).",
-                "Device LVS: bash layout/netgen/run_lvs.sh (Docker Magic/netgen).",
-                "",
-                "  ua[0] met4 -> S/H vin_ecg",
-                "  ua[1] met4 -> R-2R vref",
-                "  vdac met3 -> vhold",
-                "  dac[11:0] met2 analog <-> digital abstract",
-                "  comp_p / sample_en / clk met3 analog <-> digital",
-                "  adc[7:0] -> uo_out, adc[11:8]/sample_en/eoc -> uio_out",
-                "  uio_oe[5:0] tied VDPWR; unused uio_* tied VGND",
-                "  VGND/VDPWR/VAPWR met4 stripes in GDS+LEF",
+                "SAR ADC tile connectivity:",
+                "  analog: Magic gencell S/H + R-2R + comparator (g5v0 MOS, xhigh poly, MIM)",
+                "  digital: OpenLane sky130_fd_sc_hd sar_adc_digital_tt (ena-gated clk/rst)",
+                "  ua[0] -> S/H vin_ecg; ua[1] -> R-2R vref",
+                "  S/H vhold -> comparator inp; R-2R vout -> comparator inn",
+                "  dac[11:0] digital -> R-2R switches; sample_en -> S/H; clk -> comparator",
+                "  comp_p -> digital; adc/sample_en/eoc -> uo/uio",
+                "  VAPWR -> analog avdd; VGND -> analog avss; VDPWR/VGND straps -> digital",
                 "",
             ]
         )

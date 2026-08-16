@@ -8,7 +8,7 @@ __pycache__/
 tb/spice/*.txt
 tb/spice/dac_vout.txt
 .DS_Store
-layout/magic/*.ext
+layout/openlane/sar_adc_digital/runs/
 layout/magic/*.spice
 layout/magic/*.nodes
 *.ext

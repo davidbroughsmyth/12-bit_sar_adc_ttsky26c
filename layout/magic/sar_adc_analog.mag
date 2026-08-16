@@ -1,0 +1,68 @@
+magic
+tech sky130A
+timestamp 1786860559
+<< metal1 >>
+rect 1200 16800 18000 16920
+rect 16800 16600 18000 16800
+rect 1200 14800 1800 15400
+rect 1200 11600 1800 12200
+rect 8800 11200 9400 11600
+rect 17800 11200 18600 11800
+rect 1200 9200 1800 9800
+rect 2400 9400 2700 9800
+rect 3700 9400 4000 9800
+rect 5000 9400 5300 9800
+rect 6300 9400 6600 9800
+rect 7600 9400 7900 9800
+rect 8900 9400 9200 9800
+rect 10200 9400 10500 9800
+rect 11500 9400 11800 9800
+rect 12800 9400 13100 9800
+rect 14100 9400 14400 9800
+rect 15400 9400 15700 9800
+rect 16700 9400 17000 9800
+rect 1200 1320 2400 1400
+rect 1200 1200 18000 1320
+<< metal2 >>
+rect 9200 12400 16000 12500
+rect 6200 11600 9200 11700
+<< labels >>
+flabel metal1 1200 11600 1800 12200 1 FreeSans 240 0 0 0 vin_ecg
+port 1 n
+flabel metal1 1200 9200 1800 9800 1 FreeSans 240 0 0 0 vref
+port 2 n
+flabel metal1 1200 14800 1800 15400 1 FreeSans 240 0 0 0 sample_en
+port 3 n
+flabel metal1 17800 11200 18600 11800 1 FreeSans 240 0 0 0 comp_p
+port 4 n
+flabel metal1 8800 11200 9400 11600 1 FreeSans 240 0 0 0 clk_cmp
+port 5 n
+flabel metal1 2400 9400 2700 9800 1 FreeSans 240 0 0 0 dac0
+port 6 n
+flabel metal1 3700 9400 4000 9800 1 FreeSans 240 0 0 0 dac1
+port 7 n
+flabel metal1 5000 9400 5300 9800 1 FreeSans 240 0 0 0 dac2
+port 8 n
+flabel metal1 6300 9400 6600 9800 1 FreeSans 240 0 0 0 dac3
+port 9 n
+flabel metal1 7600 9400 7900 9800 1 FreeSans 240 0 0 0 dac4
+port 10 n
+flabel metal1 8900 9400 9200 9800 1 FreeSans 240 0 0 0 dac5
+port 11 n
+flabel metal1 10200 9400 10500 9800 1 FreeSans 240 0 0 0 dac6
+port 12 n
+flabel metal1 11500 9400 11800 9800 1 FreeSans 240 0 0 0 dac7
+port 13 n
+flabel metal1 12800 9400 13100 9800 1 FreeSans 240 0 0 0 dac8
+port 14 n
+flabel metal1 14100 9400 14400 9800 1 FreeSans 240 0 0 0 dac9
+port 15 n
+flabel metal1 15400 9400 15700 9800 1 FreeSans 240 0 0 0 dac10
+port 16 n
+flabel metal1 16700 9400 17000 9800 1 FreeSans 240 0 0 0 dac11
+port 17 n
+flabel metal1 16800 16600 18000 16900 1 FreeSans 240 0 0 0 avdd
+port 18 n
+flabel metal1 1200 1200 2400 1400 1 FreeSans 240 0 0 0 avss
+port 19 n
+<< end >>

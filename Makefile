@@ -50,8 +50,7 @@ layout-digital:
 	bash layout/openlane/run_openlane.sh
 
 layout-analog:
-	$(PYTHON) layout/build_gds.py
-	bash layout/magic/run_magic.sh layout/magic/sample_hold.tcl
+	bash layout/magic/run_magic.sh layout/magic/sar_adc_analog_gencell.tcl
 
 tt-magic:
 	bash layout/magic/run_magic.sh layout/magic/tt_tile.tcl
