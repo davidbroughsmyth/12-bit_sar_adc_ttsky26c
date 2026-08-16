@@ -70,13 +70,11 @@ def manhattan(cell, x0, y0, x1, y1, layer="met4", width=0.4):
     hw = width / 2
     add_rect(cell, layer, x0 - hw, min(y0, y1) - hw, width, abs(y1 - y0) + width)
     add_rect(cell, layer, min(x0, x1) - hw, y1 - hw, abs(x1 - x0) + width, width)
-
-
-def via34(cell, x, y, s=0.2):
-    pad = 0.4
-    add_rect(cell, "met3", x - 0.1, y - 0.1, pad, pad)
-    add_rect(cell, "via3", x, y, s, s)
-    add_rect(cell, "met4", x - 0.1, y - 0.1, pad, pad)
+    # Landing pads keep met3 above min area 0.24 um^2 at L-bends / stubs.
+    if layer == "met3":
+        pad = max(width, 0.6)
+        add_rect(cell, layer, x0 - pad / 2, y0 - pad / 2, pad, pad)
+        add_rect(cell, layer, x1 - pad / 2, y1 - pad / 2, pad, pad)
 
 
 def analog_core(cell, ox, oy):
@@ -173,10 +171,10 @@ def main() -> int:
 
     for i in range(12):
         manhattan(cell, *analog[f"dac[{i}]"], *digital[f"dac[{i}]"], "met2", 0.3)
-    manhattan(cell, *analog["comp_p"], *digital["comp_p"], "met3", 0.4)
-    manhattan(cell, *digital["sample_en"], *analog["sample_en"], "met3", 0.4)
-    manhattan(cell, *analog["vdac"], *analog["vhold"], "met3", 0.4)
-    manhattan(cell, *digital["clk"], *analog["clk_cmp"], "met3", 0.4)
+    manhattan(cell, *analog["comp_p"], *digital["comp_p"], "met3", 0.6)
+    manhattan(cell, *digital["sample_en"], *analog["sample_en"], "met3", 0.6)
+    manhattan(cell, *analog["vdac"], *analog["vhold"], "met3", 0.6)
+    manhattan(cell, *digital["clk"], *analog["clk_cmp"], "met3", 0.6)
 
     pin_boxes = {}
     for p in pins:
@@ -188,8 +186,6 @@ def main() -> int:
         bx, by, bw, bh = pin_boxes[pin_name]
         cx, cy = bx + bw / 2, by + bh / 2
         manhattan(cell, cx, cy, tap[0], tap[1], layer, 0.4)
-        if layer == "met4":
-            via34(cell, tap[0], tap[1])
 
     def tie(pin_name, rail_x, y=12.0):
         bx, by, bw, bh = pin_boxes[pin_name]
