@@ -65,16 +65,106 @@ def pin_met4(cell, name, px, py, lx, ly, hx, hy):
     return x, y, w, h
 
 
-def manhattan(cell, x0, y0, x1, y1, layer="met4", width=0.4):
-    """Vertical from the pin, then horizontal (avoids shorting bottom analog pads)."""
-    hw = width / 2
-    add_rect(cell, layer, x0 - hw, min(y0, y1) - hw, width, abs(y1 - y0) + width)
-    add_rect(cell, layer, min(x0, x1) - hw, y1 - hw, abs(x1 - x0) + width, width)
-    # Landing pads keep met3 above min area 0.24 um^2 at L-bends / stubs.
-    if layer == "met3":
-        pad = max(width, 0.6)
-        add_rect(cell, layer, x0 - pad / 2, y0 - pad / 2, pad, pad)
-        add_rect(cell, layer, x1 - pad / 2, y1 - pad / 2, pad, pad)
+def add_pad(cell, layer, cx, cy, s=0.6):
+    add_rect(cell, layer, cx - s / 2, cy - s / 2, s, s)
+
+
+def via_stack(cell, cx, cy, upper: str, lower: str):
+    """Stack vias between met4..met1. Pads satisfy met3 min-area 0.24 um^2."""
+    order = ["met1", "met2", "met3", "met4"]
+    vias = {("met1", "met2"): ("via", 0.15), ("met2", "met3"): ("via2", 0.2), ("met3", "met4"): ("via3", 0.2)}
+    u, l = order.index(upper), order.index(lower)
+    if u < l:
+        u, l = l, u
+        upper, lower = lower, upper
+    for i in range(l, u):
+        a, b = order[i], order[i + 1]
+        vname, vs = vias[(a, b)]
+        add_pad(cell, a, cx, cy, 0.6)
+        add_pad(cell, b, cx, cy, 0.6)
+        add_rect(cell, vname, cx - vs / 2, cy - vs / 2, vs, vs)
+
+
+def seg_v(cell, x, y0, y1, layer, width=0.4):
+    add_rect(cell, layer, x - width / 2, min(y0, y1) - width / 2, width, abs(y1 - y0) + width)
+
+
+def seg_h(cell, y, x0, x1, layer, width=0.4):
+    add_rect(cell, layer, min(x0, x1) - width / 2, y - width / 2, abs(x1 - x0) + width, width)
+
+
+class OrthoRouter:
+    """Verticals on met3, horizontals on met2 so signal L-routes cannot short."""
+
+    def __init__(self, cell):
+        self.cell = cell
+        self.jog_y = 196.0
+        self.east_x = 311.2
+        self.pwr_y = 8.0
+
+    def alloc_jog(self) -> float:
+        y = self.jog_y
+        self.jog_y += 0.8
+        if self.jog_y > 222.0:
+            self.jog_y = 196.0
+        return y
+
+    def alloc_east(self) -> float:
+        x = self.east_x
+        self.east_x += 0.7
+        return x
+
+    def alloc_pwr(self) -> float:
+        y = self.pwr_y
+        self.pwr_y += 0.8
+        return y
+
+    def connect(self, x0, y0, x1, y1, start="met3", end="met3"):
+        """Orthogonal path: met3 verticals + met2 horizontals + vias at corners."""
+        c = self.cell
+        if abs(x0 - x1) < 0.2:
+            via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
+            seg_v(c, x0, y0, y1, "met3")
+            via_stack(c, x1, y1, "met3", end) if end != "met3" else add_pad(c, "met3", x1, y1)
+            return
+        if abs(y0 - y1) < 0.2:
+            via_stack(c, x0, y0, "met2", start) if start != "met2" else add_pad(c, "met2", x0, y0)
+            seg_h(c, y0, x0, x1, "met2")
+            via_stack(c, x1, y1, "met2", end) if end != "met2" else add_pad(c, "met2", x1, y1)
+            return
+        yj = self.alloc_jog() if max(y0, y1) > 180 else (min(y0, y1) - 2.0 if min(y0, y1) > 16 else 10.0)
+        # Prefer east channel for destinations in the digital macro.
+        if x1 > 198 and x0 < 198:
+            xt = self.alloc_east()
+            via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
+            seg_v(c, x0, y0, yj, "met3")
+            via_stack(c, x0, yj, "met3", "met2")
+            seg_h(c, yj, x0, xt, "met2")
+            via_stack(c, xt, yj, "met2", "met3")
+            seg_v(c, xt, yj, y1, "met3")
+            via_stack(c, xt, y1, "met3", "met2")
+            seg_h(c, y1, xt, x1, "met2")
+            via_stack(c, x1, y1, "met2", end)
+            return
+        via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
+        seg_v(c, x0, y0, yj, "met3")
+        via_stack(c, x0, yj, "met3", "met2")
+        seg_h(c, yj, x0, x1, "met2")
+        via_stack(c, x1, yj, "met2", "met3")
+        seg_v(c, x1, yj, y1, "met3")
+        via_stack(c, x1, y1, "met3", end) if end != "met3" else add_pad(c, "met3", x1, y1)
+
+
+def escape_pin(cell, name, px, py, lx, ly, hx, hy) -> tuple[float, float]:
+    """met4 pin (TT) + 1.8 um stub + via3. Signal continues on met3."""
+    pin_met4(cell, name, px, py, lx, ly, hx, hy)
+    vy = py - 1.8 if py > 100 else py + 1.8
+    seg_v(cell, px, py, vy, "met4", 0.3)
+    via_stack(cell, px, vy, "met4", "met3")
+    return px, vy
+
+
+GDS_LAYER_TO_MET = {68: "met1", 69: "met2", 70: "met3", 71: "met4"}
 
 
 def flatten_gds(path: Path, name: str) -> gdstk.Cell:
@@ -105,18 +195,20 @@ def find_digital_gds() -> Path | None:
     return found[-1] if found else None
 
 
-def digital_taps_from_gds(cell: gdstk.Cell, ox: float, oy: float) -> dict[str, tuple[float, float]]:
-        names = {}
-        bb = cell.bounding_box()
-        (x0, y0), (x1, y1) = bb if bb else ((0, 0), (0, 0))
-        for lab in cell.labels:
-            x, y = lab.origin[0] + ox, lab.origin[1] + oy
-            lx, ly = lab.origin
-            on_edge = lx <= x0 + 3 or lx >= x1 - 3 or ly <= y0 + 3 or ly >= y1 - 3
-            key = lab.text
-            if on_edge or key not in names:
-                names[key] = (x, y)
-        return names
+def digital_taps_from_gds(cell: gdstk.Cell, ox: float, oy: float) -> dict[str, tuple[float, float, str]]:
+    names: dict[str, tuple[float, float, str]] = {}
+    bb = cell.bounding_box()
+    (x0, y0), (x1, y1) = bb if bb else ((0, 0), (0, 0))
+    for lab in cell.labels:
+        lx, ly = lab.origin
+        on_edge = lx <= x0 + 3 or lx >= x1 - 3 or ly <= y0 + 3 or ly >= y1 - 3
+        met = GDS_LAYER_TO_MET.get(lab.layer, "met2")
+        val = (lx + ox, ly + oy, met)
+        if on_edge:
+            names[lab.text] = val
+        elif lab.text not in names:
+            names[lab.text] = val
+    return names
 
 
 def main() -> int:
@@ -175,65 +267,83 @@ def main() -> int:
     else:
         print("OpenLane digital GDS missing — placeholder taps at east edge")
         digital = {
-            "clk": (ox_dig + 8, oy_dig + 140),
-            "rst_n": (ox_dig + 16, oy_dig + 140),
-            "ena": (ox_dig + 24, oy_dig + 140),
-            "sample_en": (ox_dig + 4, oy_dig + 50),
-            "eoc": (ox_dig + 4, oy_dig + 44),
-            "comp_p": (ox_dig + 4, oy_dig + 40),
+            "clk": (ox_dig + 8, oy_dig + 2, "met2"),
+            "rst_n": (ox_dig + 16, oy_dig + 2, "met2"),
+            "ena": (ox_dig + 24, oy_dig + 2, "met2"),
+            "sample_en": (ox_dig + 50, oy_dig + 2, "met2"),
+            "eoc": (ox_dig + 108, oy_dig + 48, "met3"),
+            "comp_p": (ox_dig + 108, oy_dig + 72, "met3"),
         }
         for i in range(12):
-            digital[f"adc[{i}]"] = (ox_dig + 100, oy_dig + 8 + i * 8)
-            digital[f"dac[{i}]"] = (ox_dig + 4, oy_dig + 8 + i * 8)
+            digital[f"adc[{i}]"] = (ox_dig + 108, oy_dig + 40 + i * 8, "met3")
+            digital[f"dac[{i}]"] = (ox_dig + 108, oy_dig + 42 + i * 8, "met3")
 
+    rt = OrthoRouter(cell)
+
+    def axy(name):
+        return analog[name][0], analog[name][1]
+
+    def dxy(name):
+        t = digital[name]
+        return t[0], t[1], t[2] if len(t) > 2 else "met2"
+
+    # Analog SAR loop (met1 device pins)
+    rt.connect(*axy("vdac"), *axy("vhold"), start="met1", end="met1")
+    rt.connect(*axy("comp_p"), *dxy("comp_p")[:2], start="met1", end=dxy("comp_p")[2])
+    rt.connect(*dxy("sample_en")[:2], *axy("sample_en"), start=dxy("sample_en")[2], end="met1")
+    rt.connect(*dxy("clk")[:2], *axy("clk_cmp"), start=dxy("clk")[2], end="met1")
     for i in range(12):
-        manhattan(cell, *analog[f"dac[{i}]"], *digital[f"dac[{i}]"], "met2", 0.3)
-    manhattan(cell, *analog["comp_p"], *digital["comp_p"], "met3", 0.6)
-    manhattan(cell, *digital["sample_en"], *analog["sample_en"], "met3", 0.6)
-    manhattan(cell, *analog["vdac"], *analog["vhold"], "met3", 0.6)
-    manhattan(cell, *digital["clk"], *analog["clk_cmp"], "met3", 0.6)
-    manhattan(cell, analog["avdd"][0], analog["avdd"][1], 8.0, analog["avdd"][1], "met4", 0.6)
-    manhattan(cell, analog["avss"][0], analog["avss"][1], 5.0, analog["avss"][1], "met4", 0.6)
-    # Digital 1.8 V / ground straps to TT power (above analog, below top pins)
-    add_rect(cell, "met4", 1.0, 188.0, 308.0, 1.6)
-    add_rect(cell, "met4", 4.0, 182.0, 305.0, 1.6)
+        dx, dy, dl = dxy(f"dac[{i}]")
+        rt.connect(*axy(f"dac[{i}]"), dx, dy, start="met1", end=dl)
 
-    pin_boxes = {}
+    # Analog supplies: via onto VAPWR / VGND stripes (no met4 crossing other rails)
+    ax, ay = axy("avdd")
+    rt.connect(ax, ay, 8.0, ay, start="met1", end="met3")
+    via_stack(cell, 8.0, ay, "met3", "met4")
+    gx, gy = axy("avss")
+    rt.connect(gx, gy, 5.0, gy, start="met1", end="met3")
+    via_stack(cell, 5.0, gy, "met3", "met4")
+    # Digital 1.8 V / GND: hop on met3 over VGND/VAPWR stripes, then met4 east of x=12
+    via_stack(cell, 2.0, 210.0, "met4", "met3")
+    seg_h(cell, 210.0, 2.0, 16.0, "met3", 0.6)
+    via_stack(cell, 16.0, 210.0, "met3", "met4")
+    add_rect(cell, "met4", 16.0, 210.0, 198.0, 1.6)
+    via_stack(cell, 5.0, 214.0, "met4", "met3")
+    seg_h(cell, 214.0, 5.0, 16.0, "met3", 0.6)
+    via_stack(cell, 16.0, 214.0, "met3", "met4")
+    add_rect(cell, "met4", 16.0, 214.0, 198.0, 1.6)
+
+    pin_met3 = {}
     for p in pins:
         px, py = p["xy"]
         lx, ly, hx, hy = p["rect"]
-        pin_boxes[p["name"]] = pin_met4(cell, p["name"], px, py, lx, ly, hx, hy)
+        pin_met3[p["name"]] = escape_pin(cell, p["name"], px, py, lx, ly, hx, hy)
 
-    def hook(pin_name, tap, layer="met4"):
-        bx, by, bw, bh = pin_boxes[pin_name]
-        cx, cy = bx + bw / 2, by + bh / 2
-        manhattan(cell, cx, cy, tap[0], tap[1], layer, 0.4)
+    def hook(pin_name, tap_xy, end_layer="met2"):
+        x0, y0 = pin_met3[pin_name]
+        rt.connect(x0, y0, tap_xy[0], tap_xy[1], start="met3", end=end_layer)
 
-    def tie(pin_name, rail_x, y=12.0):
-        bx, by, bw, bh = pin_boxes[pin_name]
-        cx, cy = bx + bw / 2, by + bh / 2
-        manhattan(cell, cx, cy, rail_x, y, "met4", 0.4)
+    def tie_power(pin_name, stripe_x):
+        x0, y0 = pin_met3[pin_name]
+        yb = rt.alloc_pwr()
+        rt.connect(x0, y0, stripe_x, yb, start="met3", end="met3")
+        via_stack(cell, stripe_x, yb, "met3", "met4")
 
-    hook("ua[0]", analog["vin_ecg"])
-    hook("ua[1]", analog["vref"])
-    # Extra met4 stub so precheck sees metal adjacent to the analog pin (not only the pin rect).
-    ua0 = pin_boxes["ua[0]"]
-    add_rect(cell, "met4", ua0[0] + ua0[2] / 2 - 0.2, ua0[1] + ua0[3] - 0.1, 0.4, 40.0)
-    ua1 = pin_boxes["ua[1]"]
-    add_rect(cell, "met4", ua1[0] + ua1[2] / 2 - 0.2, ua1[1] + ua1[3] - 0.1, 0.4, 25.0)
-    hook("clk", digital["clk"])
-    hook("rst_n", digital["rst_n"])
-    hook("ena", digital["ena"])
+    hook("ua[0]", axy("vin_ecg"), "met1")
+    hook("ua[1]", axy("vref"), "met1")
+    hook("clk", dxy("clk")[:2], dxy("clk")[2])
+    hook("rst_n", dxy("rst_n")[:2], dxy("rst_n")[2])
+    hook("ena", dxy("ena")[:2], dxy("ena")[2])
     for i in range(8):
-        hook(f"uo_out[{i}]", digital[f"adc[{i}]"])
+        hook(f"uo_out[{i}]", dxy(f"adc[{i}]")[:2], dxy(f"adc[{i}]")[2])
     for i in range(4):
-        hook(f"uio_out[{i}]", digital[f"adc[{i + 8}]"])
-    hook("uio_out[4]", digital["sample_en"])
-    hook("uio_out[5]", digital["eoc"])
+        hook(f"uio_out[{i}]", dxy(f"adc[{i + 8}]")[:2], dxy(f"adc[{i + 8}]")[2])
+    hook("uio_out[4]", dxy("sample_en")[:2], dxy("sample_en")[2])
+    hook("uio_out[5]", dxy("eoc")[:2], dxy("eoc")[2])
     for i in range(6):
-        tie(f"uio_oe[{i}]", vdpwr_x)
+        tie_power(f"uio_oe[{i}]", vdpwr_x)
     for name in ("uio_oe[6]", "uio_oe[7]", "uio_out[6]", "uio_out[7]"):
-        tie(name, vgnd_x)
+        tie_power(name, vgnd_x)
 
     gds_path = ROOT / "gds" / f"{TOP}.gds"
     lef_path = ROOT / "lef" / f"{TOP}.lef"
