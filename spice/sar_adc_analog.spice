@@ -1,0 +1,14 @@
+* Analog top: pads vin_ecg, vref + S/H, R-2R DAC, comparator.
+* Digital interface: sample_en, dac[11:0], comp_p.
+.subckt sar_adc_analog
++ vin_ecg vref
++ sample_en
++ dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++ comp_p clk_cmp
++ avdd avss
+
+Xsh  vin_ecg vhold sample_en avdd avss sample_hold
+Xdac dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++    vdac vref avss r2r_dac
+Xcmp vhold vdac clk_cmp comp_p avdd avss comparator
+.ends

@@ -1,0 +1,16 @@
+* Two-stage MOS comparator (3.3 V analog). Tie clk to avdd.
+* comp_p ~ avdd when inp > inn.
+.subckt comparator inp inn clk comp_p avdd avss
+Itail ntail avss DC 80u
+Msw  nsrc clk ntail avss nmos_l1 W=20U L=2U
+M1   nd1  inp nsrc avss nmos_l1 W=16U L=2U
+M2   nd2  inn nsrc avss nmos_l1 W=16U L=2U
+M3   nd1  nd1 avdd avdd pmos_l1 W=12U L=2U
+M4   nd2  nd1 avdd avdd pmos_l1 W=12U L=2U
+* Inverting second stage + one CMOS inverter -> non-inverting overall
+M5   nmid nd2 avss avss nmos_l1 W=8U L=2U
+M6   nmid nd2 avdd avdd pmos_l1 W=16U L=2U
+M7   comp_p nmid avss avss nmos_l1 W=8U L=2U
+M8   comp_p nmid avdd avdd pmos_l1 W=16U L=2U
+Cout comp_p avss 20f
+.ends

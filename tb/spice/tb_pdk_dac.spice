@@ -1,0 +1,30 @@
+* PDK R-2R DAC at mid code 2048 (MSB only).
+.lib ${PDK_ROOT}/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.option scale=1e-6
+.include ../../spice/r2r_dac_sky130.spice
+
+Vdd avdd 0 DC 3.3
+Vss avss 0 DC 0
+Vref vref 0 DC 3.3
+Vd11 dac11 avss DC 3.3
+Vd10 dac10 avss DC 0
+Vd9 dac9 avss DC 0
+Vd8 dac8 avss DC 0
+Vd7 dac7 avss DC 0
+Vd6 dac6 avss DC 0
+Vd5 dac5 avss DC 0
+Vd4 dac4 avss DC 0
+Vd3 dac3 avss DC 0
+Vd2 dac2 avss DC 0
+Vd1 dac1 avss DC 0
+Vd0 dac0 avss DC 0
+
+Xdac dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++    vout vref avss avdd r2r_dac_sky130
+
+.control
+op
+print v(vout)
+echo PDK_DAC_OK
+.endc
+.end

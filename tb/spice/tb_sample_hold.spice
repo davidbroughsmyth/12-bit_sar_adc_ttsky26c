@@ -1,0 +1,21 @@
+* Sample/hold acquisition + droop over 0.7 ms hold (one SAR conversion).
+.include ../../spice/models/generic_cmos.spice
+.include ../../spice/sample_hold.spice
+
+Vdd avdd 0 DC 3.3
+Vss avss 0 DC 0
+Vin vin_ecg avss DC 1.65
+Vse sample_en avss PWL(0 3.3 50u 3.3 50.1u 0 750u 0)
+
+Xsh vin_ecg vhold sample_en avdd avss sample_hold
+
+.tran 1u 750u
+.control
+run
+meas tran v_track FIND v(vhold) AT=40u
+meas tran v_hold  FIND v(vhold) AT=740u
+let droop = v_track - v_hold
+print v_track v_hold droop
+wrdata sh_tran.txt v(vhold) v(sample_en)
+.endc
+.end

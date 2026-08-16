@@ -1,0 +1,122 @@
+* Sky130 12-bit R-2R DAC
+* Poly resistor: sky130_fd_pr__res_xhigh_po_0p35 (P N). Unit L=8 um ~ high-R.
+* 2R uses L=16 um. Analog switches: 3.3 V g5v0 MOS TGs.
+* Requires: .lib / .include of sky130_fd_pr from PDK_ROOT (see README).
+.subckt r2r_dac_sky130
++ dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++ vout vref avss avdd
+
+Xt n0 avss avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X20 n0 t0 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X01 n0 n1 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X21 n1 t1 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X12 n1 n2 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X22 n2 t2 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X23 n2 n3 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X23b n3 t3 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X34 n3 n4 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X24 n4 t4 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X45 n4 n5 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X25 n5 t5 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X56 n5 n6 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X26 n6 t6 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X67 n6 n7 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X27 n7 t7 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X78 n7 n8 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X28 n8 t8 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X89 n8 n9 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X29 n9 t9 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X910 n9 n10 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X210 n10 t10 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+X1011 n10 n11 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+X211 n11 t11 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=16
+Xout n11 vout avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=0.35
+
+* Bit switches: nMOS to vref when dac=1, nMOS to avss when dac=0 (plus pMOS TG)
+* Inverters for complementary gates (1.8/3.3 digital assumed 0/3.3 here)
+Xinv0n d0n dac0 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv0p d0n dac0 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv1n d1n dac1 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv1p d1n dac1 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv2n d2n dac2 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv2p d2n dac2 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv3n d3n dac3 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv3p d3n dac3 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv4n d4n dac4 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv4p d4n dac4 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv5n d5n dac5 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv5p d5n dac5 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv6n d6n dac6 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv6p d6n dac6 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv7n d7n dac7 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv7p d7n dac7 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv8n d8n dac8 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv8p d8n dac8 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv9n d9n dac9 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv9p d9n dac9 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv10n d10n dac10 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv10p d10n dac10 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinv11n d11n dac11 avss avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinv11p d11n dac11 avdd avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+
+* TG to vref (dac high) and TG to avss (dac low)
+Xn0h t0 dac0  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp0h t0 d0n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn0l t0 d0n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp0l t0 dac0  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn1h t1 dac1  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp1h t1 d1n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn1l t1 d1n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp1l t1 dac1  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn2h t2 dac2  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp2h t2 d2n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn2l t2 d2n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp2l t2 dac2  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn3h t3 dac3  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp3h t3 d3n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn3l t3 d3n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp3l t3 dac3  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn4h t4 dac4  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp4h t4 d4n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn4l t4 d4n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp4l t4 dac4  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn5h t5 dac5  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp5h t5 d5n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn5l t5 d5n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp5l t5 dac5  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn6h t6 dac6  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp6h t6 d6n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn6l t6 d6n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp6l t6 dac6  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn7h t7 dac7  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp7h t7 d7n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn7l t7 d7n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp7l t7 dac7  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn8h t8 dac8  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp8h t8 d8n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn8l t8 d8n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp8l t8 dac8  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn9h t9 dac9  vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp9h t9 d9n   vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn9l t9 d9n   avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp9l t9 dac9  avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn10h t10 dac10 vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp10h t10 d10n  vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn10l t10 d10n  avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp10l t10 dac10 avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+
+Xn11h t11 dac11 vref avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp11h t11 d11n  vref avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+Xn11l t11 d11n  avss avss sky130_fd_pr__nfet_g5v0d10v5 W=2 L=0.5
+Xp11l t11 dac11 avss avdd sky130_fd_pr__pfet_g5v0d10v5 W=4 L=0.5
+.ends

@@ -1,0 +1,5 @@
+Sky130 first-cut DRC (width vs MIN_WIDTH on generated rects)
+
+
+width violations: 0
+Note: this is not Magic/KLayout foundry DRC. Analog LVS pending netgen.

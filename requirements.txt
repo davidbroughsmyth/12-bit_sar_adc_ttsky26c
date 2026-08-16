@@ -1,0 +1,4 @@
+gdstk>=1.0
+matplotlib>=3.7
+wfdb>=4.1
+numpy>=1.24

@@ -1,0 +1,19 @@
+* PDK smoke: 3.3 V nFET + xhigh poly resistor + MIM.
+.lib ${PDK_ROOT}/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.option scale=1e-6
+Vdd avdd 0 DC 3.3
+Vss avss 0 DC 0
+Vg  g 0 DC 3.3
+Xd  d g avss avss sky130_fd_pr__nfet_g5v0d10v5 W=4 L=0.5
+Rd  avdd d 10k
+Xr  n1 n2 avss sky130_fd_pr__res_xhigh_po_0p35 W=0.35 L=8
+Vr1 n1 0 DC 1
+Vr2 n2 0 DC 0
+Xc  c0 avss sky130_fd_pr__cap_mim_m3_1 W=10 L=10
+Vc  c0 0 DC 1.65
+.control
+op
+print v(d)
+echo PDK_SMOKE_OK
+.endc
+.end

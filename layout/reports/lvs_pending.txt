@@ -1,0 +1,15 @@
+Analog LVS (netgen)
+====================
+netgen was not present on the build host. Compare:
+
+  spice/sample_hold_sky130.spice
+  spice/r2r_dac_sky130.spice
+  spice/comparator_sky130.spice
+  spice/sar_adc_analog_sky130.spice
+
+against Magics/GDS extracted netlists when PDK_ROOT and netgen are installed:
+
+  netgen -batch lvs "layout/gds/sar_adc_analog.gds sar_adc_analog" \
+    "spice/sar_adc_analog_sky130.spice sar_adc_analog_sky130" sky130A_setup.tcl
+
+Digital LVS/timing: run OpenLane (layout/openlane/run_openlane.sh) with sky130A PDK.

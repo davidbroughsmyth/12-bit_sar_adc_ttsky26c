@@ -1,0 +1,19 @@
+* MOS comparator trip / delay.
+.include ../../spice/models/generic_cmos.spice
+.include ../../spice/comparator.spice
+
+Vdd avdd 0 DC 3.3
+Vss avss 0 DC 0
+Vclk clk avss DC 3.3
+Vinn inn avss DC 1.65
+Vinp inp avss DC 1.65 PWL(0 1.55 10u 1.55 10.1u 1.75 40u 1.75)
+
+Xcmp inp inn clk comp_p avdd avss comparator
+
+.tran 0.1u 40u
+.control
+run
+print v(comp_p)
+wrdata cmp_tran.txt v(inp) v(inn) v(comp_p)
+.endc
+.end

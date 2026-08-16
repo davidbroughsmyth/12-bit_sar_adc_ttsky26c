@@ -1,0 +1,70 @@
+* 12-bit R-2R DAC (MSB = dac11). Vout = Vref * code / 4096 with ideal matching.
+* dac bits are 0 V or 3.3 V. Unit R = 10 kOhm.
+.subckt r2r_dac
++ dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++ vout vref avss
+
+Rterm n0 avss 20k
+R2_0  n0 t0   20k
+R01   n0 n1   10k
+R2_1  n1 t1   20k
+R12   n1 n2   10k
+R2_2  n2 t2   20k
+R23   n2 n3   10k
+R2_3  n3 t3   20k
+R34   n3 n4   10k
+R2_4  n4 t4   20k
+R45   n4 n5   10k
+R2_5  n5 t5   20k
+R56   n5 n6   10k
+R2_6  n6 t6   20k
+R67   n6 n7   10k
+R2_7  n7 t7   20k
+R78   n7 n8   10k
+R2_8  n8 t8   20k
+R89   n8 n9   10k
+R2_9  n9 t9   20k
+R910  n9 n10  10k
+R2_10 n10 t10 20k
+R1011 n10 n11 10k
+R2_11 n11 t11 20k
+Rout  n11 vout 1
+
+Binv0  d0n  avss V={3.3 - v(dac0)}
+Binv1  d1n  avss V={3.3 - v(dac1)}
+Binv2  d2n  avss V={3.3 - v(dac2)}
+Binv3  d3n  avss V={3.3 - v(dac3)}
+Binv4  d4n  avss V={3.3 - v(dac4)}
+Binv5  d5n  avss V={3.3 - v(dac5)}
+Binv6  d6n  avss V={3.3 - v(dac6)}
+Binv7  d7n  avss V={3.3 - v(dac7)}
+Binv8  d8n  avss V={3.3 - v(dac8)}
+Binv9  d9n  avss V={3.3 - v(dac9)}
+Binv10 d10n avss V={3.3 - v(dac10)}
+Binv11 d11n avss V={3.3 - v(dac11)}
+
+S0h  vref t0  dac0 avss sw_cmos
+S0l  avss t0  d0n  avss sw_cmos
+S1h  vref t1  dac1 avss sw_cmos
+S1l  avss t1  d1n  avss sw_cmos
+S2h  vref t2  dac2 avss sw_cmos
+S2l  avss t2  d2n  avss sw_cmos
+S3h  vref t3  dac3 avss sw_cmos
+S3l  avss t3  d3n  avss sw_cmos
+S4h  vref t4  dac4 avss sw_cmos
+S4l  avss t4  d4n  avss sw_cmos
+S5h  vref t5  dac5 avss sw_cmos
+S5l  avss t5  d5n  avss sw_cmos
+S6h  vref t6  dac6 avss sw_cmos
+S6l  avss t6  d6n  avss sw_cmos
+S7h  vref t7  dac7 avss sw_cmos
+S7l  avss t7  d7n  avss sw_cmos
+S8h  vref t8  dac8 avss sw_cmos
+S8l  avss t8  d8n  avss sw_cmos
+S9h  vref t9  dac9 avss sw_cmos
+S9l  avss t9  d9n  avss sw_cmos
+S10h vref t10 dac10 avss sw_cmos
+S10l avss t10 d10n  avss sw_cmos
+S11h vref t11 dac11 avss sw_cmos
+S11l avss t11 d11n  avss sw_cmos
+.ends

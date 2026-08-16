@@ -1,0 +1,21 @@
+{
+  "DESIGN_NAME": "sar_adc_digital",
+  "VERILOG_FILES": [
+    "dir::../../../rtl/rate_divider.v",
+    "dir::../../../rtl/sar_fsm.v",
+    "dir::../../../rtl/sar_adc_digital.v"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_NET": "clk",
+  "CLOCK_PERIOD": 20.0,
+  "FP_SIZING": "absolute",
+  "DIE_AREA": "0 0 200 160",
+  "CORE_AREA": "10 10 190 150",
+  "FP_PIN_ORDER_CFG": "dir::pin_order.cfg",
+  "FP_PDN_MULTILAYER": true,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_KLAYOUT_DRC": false,
+  "DESIGN_IS_CORE": true,
+  "PNR_SDC_FILE": "dir::constraint.sdc",
+  "SIGNOFF_SDC_FILE": "dir::constraint.sdc"
+}

@@ -1,0 +1,22 @@
+* Behavioral AD8232-like AFE (SparkFun single-lead HRM).
+* Not a transistor-level AD8232: mid-rail bias, gain ~1100, ~0.5-40 Hz.
+* vin_ecg_body: electrode voltage in volts (typically mV-scale).
+* vout: 0-3.3 V single-ended for the SAR ADC.
+.subckt ad8232_afe vin_ecg_body vout avdd avss
+.param gain=1100
+.param vmid=1.65
+* Two-pole HPF ~0.5 Hz (RC = 0.32 s)
+Rh1 vin_ecg_body n1 10Meg
+Ch1 n1 n_hp 1u
+Rh2 n_hp n2 10Meg
+Ch2 n2 n_hp2 1u
+* Two-pole LPF ~40 Hz
+Elp1 n_lp1 avss n_hp2 avss 1
+Rlp1 n_lp1 n_lp2 4.0k
+Clp1 n_lp2 avss 1u
+Rlp2 n_lp2 n_lp3 4.0k
+Clp2 n_lp3 avss 1u
+* Gain + mid-rail + clamp
+Bgain vraw avss V={vmid + gain * v(n_lp3)}
+Bclmp vout avss V={v(vraw) < 0.05 ? 0.05 : (v(vraw) > 3.25 ? 3.25 : v(vraw))}
+.ends

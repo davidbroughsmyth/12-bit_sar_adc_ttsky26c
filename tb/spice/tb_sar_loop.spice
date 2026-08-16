@@ -1,0 +1,67 @@
+* Closed-loop 12-bit SAR using R-2R + ideal comparator (scripted in .control).
+.include ../../spice/models/generic_cmos.spice
+.include ../../spice/r2r_dac.spice
+.include ../../spice/sample_hold.spice
+.include ../../spice/comparator_ideal.spice
+
+.param vin_dc=1.65
+
+Vdd avdd 0 DC 3.3
+Vss avss 0 DC 0
+Vref vref 0 DC 3.3
+Vin vin_ecg avss DC {vin_dc}
+Vse sample_en avss DC 0
+Vclk clk_cmp avss DC 3.3
+
+Vd0  dac0  avss DC 0
+Vd1  dac1  avss DC 0
+Vd2  dac2  avss DC 0
+Vd3  dac3  avss DC 0
+Vd4  dac4  avss DC 0
+Vd5  dac5  avss DC 0
+Vd6  dac6  avss DC 0
+Vd7  dac7  avss DC 0
+Vd8  dac8  avss DC 0
+Vd9  dac9  avss DC 0
+Vd10 dac10 avss DC 0
+Vd11 dac11 avss DC 0
+
+Xsh  vin_ecg vhold sample_en avdd avss sample_hold
+Xdac dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++    vdac vref avss r2r_dac
+Xcmp vhold vdac clk_cmp comp_p avdd avss comparator_ideal
+
+.control
+* Track then hold
+alter Vse = 3.3
+tran 1u 20u
+alter Vse = 0
+tran 1u 20u
+
+let code = 0
+let bit = 2048
+dowhile bit >= 1
+  let trial = code + bit
+  alter Vd0  = ((trial / 1) mod 2) * 3.3
+  alter Vd1  = ((trial / 2) mod 2) * 3.3
+  alter Vd2  = ((trial / 4) mod 2) * 3.3
+  alter Vd3  = ((trial / 8) mod 2) * 3.3
+  alter Vd4  = ((trial / 16) mod 2) * 3.3
+  alter Vd5  = ((trial / 32) mod 2) * 3.3
+  alter Vd6  = ((trial / 64) mod 2) * 3.3
+  alter Vd7  = ((trial / 128) mod 2) * 3.3
+  alter Vd8  = ((trial / 256) mod 2) * 3.3
+  alter Vd9  = ((trial / 512) mod 2) * 3.3
+  alter Vd10 = ((trial / 1024) mod 2) * 3.3
+  alter Vd11 = ((trial / 2048) mod 2) * 3.3
+  tran 1u 50u
+  if v(comp_p) > 1.5
+    let code = trial
+  end
+  let bit = bit / 2
+end
+echo SAR_CODE
+print code
+wrdata sar_code.txt code
+.endc
+.end

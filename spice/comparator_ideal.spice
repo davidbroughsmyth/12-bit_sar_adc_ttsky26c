@@ -1,0 +1,4 @@
+* Ideal threshold comparator for mixed-signal SAR loop tests.
+.subckt comparator_ideal inp inn clk comp_p avdd avss
+Bcmp comp_p avss V={v(inp) >= v(inn) ? v(avdd) : 0}
+.ends

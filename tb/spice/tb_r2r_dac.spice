@@ -1,0 +1,30 @@
+* R-2R DAC INL/DNL bench. Code is applied as 0/3.3 V bit sources.
+* Python runner alters Vd* or this file uses a single code via .param.
+.param code=2048
+.include ../../spice/models/generic_cmos.spice
+.include ../../spice/r2r_dac.spice
+
+Vref vref 0 DC 3.3
+Vss  avss 0 DC 0
+Vd0  dac0 avss DC {3.3 * ((code / 1)    mod 2)}
+Vd1  dac1 avss DC {3.3 * ((code / 2)    mod 2)}
+Vd2  dac2 avss DC {3.3 * ((code / 4)    mod 2)}
+Vd3  dac3 avss DC {3.3 * ((code / 8)    mod 2)}
+Vd4  dac4 avss DC {3.3 * ((code / 16)   mod 2)}
+Vd5  dac5 avss DC {3.3 * ((code / 32)   mod 2)}
+Vd6  dac6 avss DC {3.3 * ((code / 64)   mod 2)}
+Vd7  dac7 avss DC {3.3 * ((code / 128)  mod 2)}
+Vd8  dac8 avss DC {3.3 * ((code / 256)  mod 2)}
+Vd9  dac9 avss DC {3.3 * ((code / 512)  mod 2)}
+Vd10 dac10 avss DC {3.3 * ((code / 1024) mod 2)}
+Vd11 dac11 avss DC {3.3 * ((code / 2048) mod 2)}
+
+Xdac dac0 dac1 dac2 dac3 dac4 dac5 dac6 dac7 dac8 dac9 dac10 dac11
++    vout vref avss r2r_dac
+
+.control
+op
+print v(vout)
+wrdata dac_vout.txt v(vout)
+.endc
+.end

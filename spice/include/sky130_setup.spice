@@ -1,0 +1,7 @@
+* Sky130A PDK include. Source layout/env.sh so PDK_ROOT is set.
+* Usage in a bench:
+*   .include ../../spice/include/sky130_setup.spice
+.lib ${PDK_ROOT}/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.option scale=1e-6
+.param mc_mm_switch=0
+.param mc_pr_switch=0

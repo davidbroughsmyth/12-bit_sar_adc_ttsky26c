@@ -1,0 +1,21 @@
+* Sky130 StrongARM-style clocked comparator, 3.3 V g5v0 devices.
+* clk high: regenerate. clk low: reset.
+.subckt comparator_sky130 inp inn clk comp_p avdd avss
+Xtail ntail clk  avss avss sky130_fd_pr__nfet_g5v0d10v5 W=8.0 L=0.5
+X1    nd1  inp  ntail avss sky130_fd_pr__nfet_g5v0d10v5 W=4.0 L=0.5
+X2    nd2  inn  ntail avss sky130_fd_pr__nfet_g5v0d10v5 W=4.0 L=0.5
+X3    nd1  nd2  nd1p  avdd sky130_fd_pr__pfet_g5v0d10v5 W=4.0 L=0.5
+X4    nd2  nd1  nd2p  avdd sky130_fd_pr__pfet_g5v0d10v5 W=4.0 L=0.5
+X5    nd1p clk  avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=4.0 L=0.5
+X6    nd2p clk  avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=4.0 L=0.5
+* Reset
+Xr1   nd1  clkb avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xr2   nd2  clkb avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+Xinvn clkb clk  avss  avss sky130_fd_pr__nfet_g5v0d10v5 W=1.0 L=0.5
+Xinvp clkb clk  avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=2.0 L=0.5
+* RS latch + buffer
+Xnq   nq   nd1  avss  avss sky130_fd_pr__nfet_g5v0d10v5 W=2.0 L=0.5
+Xpq   nq   nd1  avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=4.0 L=0.5
+Xnb   comp_p nq avss  avss sky130_fd_pr__nfet_g5v0d10v5 W=2.0 L=0.5
+Xpb   comp_p nq avdd  avdd sky130_fd_pr__pfet_g5v0d10v5 W=4.0 L=0.5
+.ends

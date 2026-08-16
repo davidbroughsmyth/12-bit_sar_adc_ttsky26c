@@ -1,0 +1,6 @@
+* Sample/hold: analog switch + 20 pF hold. sample_en high = TRACK.
+.subckt sample_hold vin_ecg vhold sample_en avdd avss
+S1 vin_ecg vhold sample_en avss sw_sh
+Chold vhold avss 100p
+Rleak vhold avss 50G
+.ends

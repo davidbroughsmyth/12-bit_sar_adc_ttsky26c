@@ -1,0 +1,8 @@
+{
+  "vdd": 3.3,
+  "vmid": 1.65,
+  "gain": 1100,
+  "f_hp_hz": 0.5,
+  "f_lp_hz": 40.0,
+  "notes": "Behavioral SparkFun AD8232-like AFE, not a transistor netlist."
+}

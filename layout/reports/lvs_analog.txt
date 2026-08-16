@@ -1,0 +1,3 @@
+magic not installed — analog LVS skipped (install Magic against sky130A.magicrc)
+netgen: not found
+Spice golden: spice/sar_adc_analog_sky130.spice

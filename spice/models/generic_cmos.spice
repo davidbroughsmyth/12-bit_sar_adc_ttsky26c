@@ -1,0 +1,5 @@
+* Generic Level-1 CMOS for behavioral analog benches (no PDK required).
+.model nmos_l1 NMOS LEVEL=1 VTO=0.5 KP=2.0e-4 LAMBDA=0.02 GAMMA=0.4 PHI=0.65
+.model pmos_l1 PMOS LEVEL=1 VTO=-0.5 KP=1.0e-4 LAMBDA=0.02 GAMMA=0.4 PHI=0.65
+.model sw_cmos SW VT=0.9 VH=0.1 RON=50 ROFF=1e12
+.model sw_sh  SW VT=0.9 VH=0.1 RON=80 ROFF=1e13
