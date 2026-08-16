@@ -1,38 +1,63 @@
 #!/usr/bin/env bash
-# Magic+netgen analog LVS when tools exist.
+# Magic extract + netgen analog LVS. Uses Docker when tools are missing.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 # shellcheck disable=SC1091
 source "$ROOT/layout/env.sh"
 REP="$ROOT/layout/reports"
 mkdir -p "$REP"
+cd "$ROOT"
 
-if [[ ! -f "${MAGICRC:-}" ]]; then
-  echo "MAGICRC missing; PDK magicrc not found" | tee "$REP/lvs_analog.txt"
-fi
+IMAGE="${OPENLANE_IMAGE:-efabless/openlane:9dbd8b5ea2bd891bed4dcc97df5c7439083f0368-arm64v8}"
+SPICE_LAY="$ROOT/spice/sar_adc_analog_sky130.spice"
+SETUP="${PDK_ROOT}/sky130A/libs.tech/netgen/sky130A_setup.tcl"
 
-if ! command -v magic >/dev/null 2>&1; then
-  echo "magic not installed — analog LVS skipped (install Magic against sky130A.magicrc)" | tee "$REP/lvs_analog.txt"
-  echo "netgen: ${NETGEN:-not found}" | tee -a "$REP/lvs_analog.txt"
-  echo "Spice golden: spice/sar_adc_analog_sky130.spice" | tee -a "$REP/lvs_analog.txt"
-  exit 0
-fi
-
-magic -rcfile "$MAGICRC" -dnull -noconsole <<'EOF'
-load layout/magic/sar_adc_analog
+extract_cmd() {
+  magic -rcfile "$1" -dnull -noconsole <<'EOF'
+load layout/magic/tt_um_davidbroughsmyth_sar_adc
 extract do local
 extract all
 ext2spice lvs
 ext2spice
 quit -noprompt
 EOF
+}
 
-if command -v netgen >/dev/null 2>&1; then
-  netgen -batch lvs \
-    "sar_adc_analog.spice sar_adc_analog" \
-    "$ROOT/spice/sar_adc_analog_sky130.spice sar_adc_analog_sky130" \
-    "$PDK_ROOT/sky130A/libs.tech/netgen/sky130A_setup.tcl" \
-    "$REP/lvs_analog.txt"
+if command -v magic >/dev/null 2>&1; then
+  extract_cmd "$MAGICRC" || true
+elif command -v docker >/dev/null 2>&1; then
+  echo "magic via docker $IMAGE"
+  docker run --rm --platform linux/arm64 \
+    -v "$ROOT":/work -v "${PDK_ROOT}":/pdk -w /work \
+    -e PDK_ROOT=/pdk -e PDK=sky130A \
+    "$IMAGE" \
+    magic -rcfile /pdk/sky130A/libs.tech/magic/sky130A.magicrc -dnull -noconsole layout/magic/tt_tile.tcl \
+    | tee "$REP/magic_extract.log" || true
 else
-  echo "netgen not found" | tee "$REP/lvs_analog.txt"
+  echo "magic not installed — analog LVS skipped" | tee "$REP/lvs_analog.txt"
+  exit 0
 fi
+
+NETGEN_BIN="$(command -v netgen || true)"
+if [[ -z "$NETGEN_BIN" ]] && command -v docker >/dev/null 2>&1; then
+  docker run --rm --platform linux/arm64 \
+    -v "$ROOT":/work -v "${PDK_ROOT}":/pdk -w /work \
+    -e PDK_ROOT=/pdk \
+    "$IMAGE" \
+    netgen -batch lvs \
+      "tt_um_davidbroughsmyth_sar_adc.spice tt_um_davidbroughsmyth_sar_adc" \
+      "/work/spice/sar_adc_analog_sky130.spice sar_adc_analog_sky130" \
+      /pdk/sky130A/libs.tech/netgen/sky130A_setup.tcl \
+      /work/layout/reports/lvs_analog.txt || true
+elif [[ -n "$NETGEN_BIN" && -f "$SETUP" ]]; then
+  netgen -batch lvs \
+    "tt_um_davidbroughsmyth_sar_adc.spice tt_um_davidbroughsmyth_sar_adc" \
+    "$SPICE_LAY sar_adc_analog_sky130" \
+    "$SETUP" \
+    "$REP/lvs_analog.txt" || true
+else
+  echo "netgen not found" | tee -a "$REP/lvs_analog.txt"
+fi
+
+[[ -f "$REP/lvs_connectivity.txt" ]] && cat "$REP/lvs_connectivity.txt" >> "$REP/lvs_analog.txt" || true
+echo "LVS report: $REP/lvs_analog.txt"

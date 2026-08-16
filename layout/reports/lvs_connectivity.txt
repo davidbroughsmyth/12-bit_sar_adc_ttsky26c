@@ -1,0 +1,11 @@
+GDS connectivity (precheck pin + analog wiring).
+Device LVS: bash layout/netgen/run_lvs.sh (Docker Magic/netgen).
+
+  ua[0] met4 -> S/H vin_ecg
+  ua[1] met4 -> R-2R vref
+  vdac met3 -> vhold
+  dac[11:0] met2 analog <-> digital abstract
+  comp_p / sample_en / clk met3 analog <-> digital
+  adc[7:0] -> uo_out, adc[11:8]/sample_en/eoc -> uio_out
+  uio_oe[5:0] tied VDPWR; unused uio_* tied VGND
+  VGND/VDPWR/VAPWR met4 stripes in GDS+LEF

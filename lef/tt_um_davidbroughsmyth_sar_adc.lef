@@ -7,6 +7,30 @@ MACRO tt_um_davidbroughsmyth_sar_adc
   FOREIGN tt_um_davidbroughsmyth_sar_adc 0 0 ;
   SIZE 319.240 BY 225.760 ;
   SYMMETRY X Y ;
+  PIN VDPWR
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER met4 ;
+      RECT 1.000 5.000 3.000 220.760 ;
+    END
+  END VDPWR
+  PIN VGND
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER met4 ;
+      RECT 4.000 5.000 6.000 220.760 ;
+    END
+  END VGND
+  PIN VAPWR
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER met4 ;
+      RECT 7.000 5.000 9.000 220.760 ;
+    END
+  END VAPWR
   PIN clk
     DIRECTION INOUT ;
     USE SIGNAL ;
