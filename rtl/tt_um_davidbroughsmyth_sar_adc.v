@@ -1,8 +1,5 @@
 `default_nettype none
-// Tiny Tapeout analog/mixed-signal wrapper (2x2 tile, 3.3 V analog).
-// ua[0]=vin_ecg, ua[1]=vref
-// uo_out[7:0]=adc[7:0]
-// uio[3:0]=adc[11:8], uio[4]=sample_en, uio[5]=eoc
+// Local RTL wrapper (not scanned by Tiny Tapeout docs; src/project.v is).
 module tt_um_davidbroughsmyth_sar_adc (
     input  wire        VGND,
     input  wire        VDPWR,
