@@ -167,7 +167,6 @@ r2r_dac via1 19.215 77.465
 r2r_dac via1 25.5 69.5
 r2r_dac via2 25.5 69.5
 r2r_dac mcon 19.0 77.465
-r2r_dac via1 19.0 77.465
 r2r_dac mcon 19.0 63.465
 r2r_dac via1 19.0 63.465
 r2r_dac via1 23.665000000000003 78.01
@@ -221,7 +220,6 @@ r2r_dac via1 32.714999999999996 77.465
 r2r_dac via1 39.0 69.5
 r2r_dac via2 39.0 69.5
 r2r_dac mcon 32.5 77.465
-r2r_dac via1 32.5 77.465
 r2r_dac mcon 32.5 63.465
 r2r_dac via1 32.5 63.465
 r2r_dac via1 37.165 78.01
@@ -275,7 +273,6 @@ r2r_dac via1 46.214999999999996 77.465
 r2r_dac via1 52.5 69.5
 r2r_dac via2 52.5 69.5
 r2r_dac mcon 46.0 77.465
-r2r_dac via1 46.0 77.465
 r2r_dac mcon 46.0 63.465
 r2r_dac via1 46.0 63.465
 r2r_dac via1 50.665 78.01
@@ -329,7 +326,6 @@ r2r_dac via1 59.714999999999996 77.465
 r2r_dac via1 66.0 69.5
 r2r_dac via2 66.0 69.5
 r2r_dac mcon 59.5 77.465
-r2r_dac via1 59.5 77.465
 r2r_dac mcon 59.5 63.465
 r2r_dac via1 59.5 63.465
 r2r_dac via1 64.16499999999999 78.01
@@ -383,7 +379,6 @@ r2r_dac via1 73.215 77.465
 r2r_dac via1 79.5 69.5
 r2r_dac via2 79.5 69.5
 r2r_dac mcon 73.0 77.465
-r2r_dac via1 73.0 77.465
 r2r_dac mcon 73.0 63.465
 r2r_dac via1 73.0 63.465
 r2r_dac via1 77.66499999999999 78.01
@@ -437,7 +432,6 @@ r2r_dac via1 86.715 77.465
 r2r_dac via1 93.0 69.5
 r2r_dac via2 93.0 69.5
 r2r_dac mcon 86.5 77.465
-r2r_dac via1 86.5 77.465
 r2r_dac mcon 86.5 63.465
 r2r_dac via1 86.5 63.465
 r2r_dac via1 91.16499999999999 78.01
@@ -491,7 +485,6 @@ r2r_dac via1 100.215 77.465
 r2r_dac via1 106.5 69.5
 r2r_dac via2 106.5 69.5
 r2r_dac mcon 100.0 77.465
-r2r_dac via1 100.0 77.465
 r2r_dac mcon 100.0 63.465
 r2r_dac via1 100.0 63.465
 r2r_dac via1 104.66499999999999 78.01
@@ -545,7 +538,6 @@ r2r_dac via1 113.715 77.465
 r2r_dac via1 120.0 69.5
 r2r_dac via2 120.0 69.5
 r2r_dac mcon 113.5 77.465
-r2r_dac via1 113.5 77.465
 r2r_dac mcon 113.5 63.465
 r2r_dac via1 113.5 63.465
 r2r_dac via1 118.16499999999999 78.01
@@ -599,7 +591,6 @@ r2r_dac via1 127.215 77.465
 r2r_dac via1 133.5 69.5
 r2r_dac via2 133.5 69.5
 r2r_dac mcon 127.0 77.465
-r2r_dac via1 127.0 77.465
 r2r_dac mcon 127.0 63.465
 r2r_dac via1 127.0 63.465
 r2r_dac via1 131.665 78.01
@@ -653,7 +644,6 @@ r2r_dac via1 140.715 77.465
 r2r_dac via1 147.0 69.5
 r2r_dac via2 147.0 69.5
 r2r_dac mcon 140.5 77.465
-r2r_dac via1 140.5 77.465
 r2r_dac mcon 140.5 63.465
 r2r_dac via1 140.5 63.465
 r2r_dac via1 145.165 78.01
@@ -707,7 +697,6 @@ r2r_dac via1 154.215 77.465
 r2r_dac via1 160.5 69.5
 r2r_dac via2 160.5 69.5
 r2r_dac mcon 154.0 77.465
-r2r_dac via1 154.0 77.465
 r2r_dac mcon 154.0 63.465
 r2r_dac via1 154.0 63.465
 r2r_dac via1 158.665 78.01
@@ -761,7 +750,6 @@ r2r_dac via1 167.715 77.465
 r2r_dac via1 174.0 69.5
 r2r_dac via2 174.0 69.5
 r2r_dac mcon 167.5 77.465
-r2r_dac via1 167.5 77.465
 r2r_dac mcon 167.5 63.465
 r2r_dac via1 167.5 63.465
 r2r_dac via1 172.165 78.01

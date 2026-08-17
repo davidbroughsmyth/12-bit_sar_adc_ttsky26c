@@ -1,6 +1,6 @@
 magic
 tech sky130A
-timestamp 1786933777
+timestamp 1786938501
 << checkpaint >>
 rect -630 -630 18830 9580
 << metal1 >>
@@ -29,15 +29,15 @@ rect 1200 1200 18000 1320
 rect 9200 12400 18100 12500
 rect 6200 11600 9200 11700
 use comparator  comparator_0
-timestamp 1786933768
+timestamp 1786938488
 transform 1 0 0 0 1 0
 box 0 0 9600 5550
 use r2r_dac  r2r_dac_0
-timestamp 1786933777
+timestamp 1786938500
 transform 1 0 0 0 1 0
 box 0 0 18200 8950
 use sample_hold  sample_hold_0
-timestamp 1786933767
+timestamp 1786938484
 transform 1 0 0 0 1 0
 box 0 0 7000 4320
 << labels >>

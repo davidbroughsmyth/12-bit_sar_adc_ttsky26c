@@ -62,6 +62,20 @@ proc via12 {cx cy} {
     if {[info exists VIAF]} { puts $VIAF "$CURRENT_CELL via1 $cx $cy" }
 }
 
+# li (tap ring) -> m1 only. Use when a nearby via12 already provides via1
+# (via.2 needs ≥0.17 µm between via1 cuts).
+proc via_mcon {cx cy} {
+    global VIAF CURRENT_CELL
+    select top cell
+    set s 0.18
+    set v 0.085
+    boxum [expr {$cx - $s}] [expr {$cy - $s}] [expr {$cx + $s}] [expr {$cy + $s}]
+    paint m1
+    boxum [expr {$cx - $v}] [expr {$cy - $v}] [expr {$cx + $v}] [expr {$cy + $v}]
+    paint mcon
+    if {[info exists VIAF]} { puts $VIAF "$CURRENT_CELL mcon $cx $cy" }
+}
+
 # li (tap ring) -> m1 -> m2. Used for pFET nwell taps that have no pcell m1.
 proc via_nwell {cx cy} {
     global VIAF CURRENT_CELL
@@ -799,7 +813,8 @@ for {set i 0} {$i < 12} {incr i} {
     via23 $gndx 69.5
     # p-substrate (nFET tap rings) -> avss on devices whose source is already avss.
     # Do not strap the high-nFET ring: that metal crosses the vref source drop.
-    via_nwell [expr {$nxi - 1.065}] $nyi
+    # via_mcon (no via1): via12 at nsx is 0.215 µm away — two via1 cuts fail via.2.
+    via_mcon [expr {$nxi - 1.065}] $nyi
     mh2 $nyi [expr {$nxi - 1.065}] $nsx 0.35
     via_nwell [expr {$nxh - 1.065}] $nsy
 
