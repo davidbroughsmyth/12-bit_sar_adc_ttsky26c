@@ -96,16 +96,16 @@ def seg_h(cell, y, x0, x1, layer, width=0.4):
 class OrthoRouter:
     """Verticals on met3, horizontals on met2. Every net gets unique tracks (no wrap)."""
 
-    DIG_W, DIG_E, DIG_N, DIG_S = 200.0, 310.0, 180.0, 40.0
+    DIG_W, DIG_E, DIG_N, DIG_S = 200.0, 310.0, 190.0, 40.0
 
     def __init__(self, cell):
         self.cell = cell
-        self.jog_y = 196.0
-        self.pwr_y = 4.0
+        self.jog_y = 190.5
+        self.pwr_y = 6.0
         self.bot_y = 6.0
         self.west_x = 10.6
         self.over_y = 168.4
-        self.alley_y = 106.72
+        self.alley_y = 105.95
         self.east_n = 0
         self.corr_n = 0
 
@@ -117,10 +117,10 @@ class OrthoRouter:
         return v
 
     def alloc_jog(self) -> float:
-        return self._alloc("jog_y", 0.5, 222.5, "top jog Y")
+        return self._alloc("jog_y", 0.75, 222.0, "top jog Y")
 
     def alloc_pwr(self) -> float:
-        return self._alloc("pwr_y", 0.8, 16.0, "power Y")
+        return self._alloc("pwr_y", 1.0, 16.0, "power Y")
 
     def alloc_bot(self) -> float:
         return self._alloc("bot_y", 2.0, 14.0, "bottom Y")
@@ -129,11 +129,12 @@ class OrthoRouter:
         return self._alloc("west_x", 1.4, 16.0, "west X")
 
     def alloc_over(self) -> float:
-        return self._alloc("over_y", 0.7, 185.5, "over-analog Y")
+        return self._alloc("over_y", 0.8, 185.5, "over-analog Y")
 
     def alloc_alley(self) -> float:
-        # Unique Y for each met2 alley run (width 0.16, pitch 0.32).
-        return self._alloc("alley_y", 0.32, 111.3, "R-2R alley Y")
+        # Unique Y for each met2 alley run. Pitch keeps 0.4 um via pads
+        # ≥0.14 um from the neighbouring 0.14 um track (met2.2).
+        return self._alloc("alley_y", 0.44, 111.45, "R-2R alley Y")
 
     def _alloc_pair(self, counter: str, origin: float, step: float, nslots: int, name: str):
         """nslots unique coordinates on met3, then the same coordinates on met1.
@@ -244,7 +245,7 @@ class OrthoRouter:
         else:
             pts += [(xd, yj), (xd, yd)]
             vlayers += ["met3", "met3"]
-        self.wire_ortho(pts, start, end, vlayers=vlayers, hwidth=0.16)
+        self.wire_ortho(pts, start, end, vlayers=vlayers, hwidth=0.14)
 
     def connect(self, x0, y0, x1, y1, start="met3", end="met3"):
         """Orthogonal path: met3 verticals + met2 horizontals + unique tracks."""
@@ -282,6 +283,13 @@ def escape_pin(cell, name, px, py, lx, ly, hx, hy) -> tuple[float, float]:
     seg_v(cell, px, py, vy, "met4", 0.3)
     via_stack(cell, px, vy, "met4", "met3")
     return px, vy
+
+
+def unused_analog_pin(name: str, analog_pins: int = 2) -> bool:
+    """ua[N] with N >= analog_pins must have no adjacent metal/via (TT analog pin check)."""
+    if not name.startswith("ua["):
+        return False
+    return int(name[3:-1]) >= analog_pins
 
 
 GDS_LAYER_TO_MET = {68: "met1", 69: "met2", 70: "met3", 71: "met4"}
@@ -437,6 +445,9 @@ def main() -> int:
     for p in pins:
         px, py = p["xy"]
         lx, ly, hx, hy = p["rect"]
+        if unused_analog_pin(p["name"]):
+            pin_met4(cell, p["name"], px, py, lx, ly, hx, hy)
+            continue
         pin_met3[p["name"]] = escape_pin(cell, p["name"], px, py, lx, ly, hx, hy)
 
     def hook(pin_name, tap_xy, end_layer="met2"):
