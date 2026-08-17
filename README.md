@@ -14,7 +14,7 @@ Successive-approximation ADC for ECG-class signals after an AD8232-like AFE.
 | Digital out | `adc[11:0]`, `sample_en` (high while tracking) |
 | LSB | 3.3 V / 4096 ≈ 0.806 mV |
 
-R-2R matching in Sky130 typically limits true linearity below 12 bit; benches report INL/DNL honestly.
+R-2R matching in Sky130 typically limits **ENOB well below 12** (expect ~8–10 bit INL-class, not a 12-bit linear DAC). Benches should report INL/DNL honestly. The AFE is **off-chip** (AD8232-class); this tile is the ADC only.
 
 ## Clocking
 
@@ -92,7 +92,7 @@ make gds
 
 OpenLane (when `PDK_ROOT` + OpenLane exist): `make layout-digital` uses [`layout/openlane/sar_adc_digital/config.json`](layout/openlane/sar_adc_digital/config.json) (`CLOCK_PERIOD` 20 ns). Magic TCL: [`layout/magic/`](layout/magic/). View: `python3 layout/klayout/view_top.py`.
 
-This is **not** foundry signoff (no padframe legalization, antenna, or extracted analog LVS until Magic/netgen + PDK).
+This is **not** foundry signoff. Analog DRC is still dirty. `make analog-check` runs Magic extract + netgen vs the Sky130 spice; S/H, comparator, and R-2R now LVS-match (resistor length property deltas on R-2R only).
 
 ## Tiny Tapeout
 
@@ -107,7 +107,8 @@ Do **not** submit `layout/gds/sar_adc_top.gds`. Submit the TT tile:
 source layout/env.sh          # PDK_ROOT=$HOME/.volare (sky130A)
 make pdk-test                 # PDK ngspice (nFET + R-2R ~1.64 V at code 2048)
 make tt-gds
-make lvs                      # Magic/netgen when installed
+make analog-check             # Magic DRC/extract + netgen vs spice
+make lvs                      # analog-check, then tile LVS if configured
 ```
 
 Submit: [docs/tapeout.md](docs/tapeout.md) → https://app.tinytapeout.com/ (analog SKY130 shuttle).

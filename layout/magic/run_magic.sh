@@ -21,6 +21,7 @@ run_docker() {
     -w /work \
     -e PDK_ROOT=/pdk \
     -e PDK=sky130A \
+    -e ANALOG_CELL="${ANALOG_CELL:-}" \
     "$IMAGE" \
     magic -rcfile /pdk/sky130A/libs.tech/magic/sky130A.magicrc -dnull -noconsole "$TCL"
 }

@@ -69,7 +69,7 @@ def add_pad(cell, layer, cx, cy, s=0.6):
     add_rect(cell, layer, cx - s / 2, cy - s / 2, s, s)
 
 
-def via_stack(cell, cx, cy, upper: str, lower: str):
+def via_stack(cell, cx, cy, upper: str, lower: str, pad=0.6):
     """Stack vias between met4..met1. Pads satisfy met3 min-area 0.24 um^2."""
     order = ["met1", "met2", "met3", "met4"]
     vias = {("met1", "met2"): ("via", 0.15), ("met2", "met3"): ("via2", 0.2), ("met3", "met4"): ("via3", 0.2)}
@@ -80,8 +80,8 @@ def via_stack(cell, cx, cy, upper: str, lower: str):
     for i in range(l, u):
         a, b = order[i], order[i + 1]
         vname, vs = vias[(a, b)]
-        add_pad(cell, a, cx, cy, 0.6)
-        add_pad(cell, b, cx, cy, 0.6)
+        add_pad(cell, a, cx, cy, pad)
+        add_pad(cell, b, cx, cy, pad)
         add_rect(cell, vname, cx - vs / 2, cy - vs / 2, vs, vs)
 
 
@@ -94,92 +94,185 @@ def seg_h(cell, y, x0, x1, layer, width=0.4):
 
 
 class OrthoRouter:
-    """Verticals on met3, horizontals on met2 so signal L-routes cannot short."""
+    """Verticals on met3, horizontals on met2. Every net gets unique tracks (no wrap)."""
+
+    DIG_W, DIG_E, DIG_N, DIG_S = 200.0, 310.0, 180.0, 40.0
 
     def __init__(self, cell):
         self.cell = cell
         self.jog_y = 196.0
-        self.east_x = 311.2
         self.pwr_y = 4.0
         self.bot_y = 6.0
         self.west_x = 10.6
+        self.over_y = 168.4
+        self.alley_y = 106.72
+        self.east_n = 0
+        self.corr_n = 0
+
+    def _alloc(self, attr: str, step: float, limit: float, name: str) -> float:
+        v = getattr(self, attr)
+        setattr(self, attr, v + step)
+        if v + step > limit:
+            print(f"warning: {name} track {v:.3f} near limit {limit}")
+        return v
 
     def alloc_jog(self) -> float:
-        y = self.jog_y
-        self.jog_y += 0.8
-        if self.jog_y > 222.0:
-            self.jog_y = 196.0
-        return y
-
-    def alloc_east(self) -> float:
-        x = self.east_x
-        self.east_x += 0.7
-        return x
+        return self._alloc("jog_y", 0.5, 222.5, "top jog Y")
 
     def alloc_pwr(self) -> float:
-        y = self.pwr_y
-        self.pwr_y += 0.8
-        return y
+        return self._alloc("pwr_y", 0.8, 16.0, "power Y")
 
     def alloc_bot(self) -> float:
-        y = self.bot_y
-        self.bot_y += 2.0
-        return y
+        return self._alloc("bot_y", 2.0, 14.0, "bottom Y")
 
     def alloc_west(self) -> float:
-        x = self.west_x
-        self.west_x += 1.4
-        return x
+        return self._alloc("west_x", 1.4, 16.0, "west X")
+
+    def alloc_over(self) -> float:
+        return self._alloc("over_y", 0.7, 185.5, "over-analog Y")
+
+    def alloc_alley(self) -> float:
+        # Unique Y for each met2 alley run (width 0.16, pitch 0.32).
+        return self._alloc("alley_y", 0.32, 111.3, "R-2R alley Y")
+
+    def _alloc_pair(self, counter: str, origin: float, step: float, nslots: int, name: str):
+        """nslots unique coordinates on met3, then the same coordinates on met1.
+
+        Pairing is delayed so the first nslots nets (and their met2 jogs) are far
+        from the reuse set; 0.5 um pads on a shared X then do not overlap.
+        """
+        i = getattr(self, counter)
+        setattr(self, counter, i + 1)
+        if i >= nslots * 2:
+            print(f"warning: {name} overflow slot {i} (max {nslots * 2})")
+        coord = origin + (i % nslots) * step
+        layer = "met3" if i < nslots else "met1"
+        return coord, layer
+
+    def alloc_east(self):
+        return self._alloc_pair("east_n", 310.7, 0.75, 10, "east X")
+
+    def alloc_corr(self):
+        return self._alloc_pair("corr_n", 190.55, 1.05, 8, "corridor X")
+
+    @staticmethod
+    def _vert(a, b) -> bool:
+        return abs(a[0] - b[0]) < 0.15
+
+    def wire_ortho(self, pts, start="met3", end="met3", vlayers=None, hwidth=0.4):
+        """Polyline: horizontals on met2; verticals on vlayers[i] or met3."""
+        c = self.cell
+        pad = 0.4
+
+        def vl(i):
+            if vlayers is None:
+                return "met3"
+            if isinstance(vlayers, str):
+                return vlayers
+            return vlayers[i]
+
+        def vwidth(layer):
+            return 0.28 if layer == "met1" else 0.4
+
+        p0, p1 = pts[0], pts[1]
+        first_v = self._vert(p0, p1)
+        fl = vl(0) if first_v else "met2"
+        if start != fl:
+            via_stack(c, p0[0], p0[1], fl, start, pad=pad)
+        else:
+            add_pad(c, fl, p0[0], p0[1], pad)
+        for i in range(len(pts) - 1):
+            a, b = pts[i], pts[i + 1]
+            if self._vert(a, b):
+                layer = vl(i)
+                if i > 0 and not self._vert(pts[i - 1], pts[i]):
+                    via_stack(c, a[0], a[1], "met2", layer, pad=pad)
+                elif i > 0 and self._vert(pts[i - 1], pts[i]) and vl(i - 1) != layer:
+                    via_stack(c, a[0], a[1], vl(i - 1), layer, pad=pad)
+                seg_v(c, a[0], a[1], b[1], layer, vwidth(layer))
+            else:
+                if i > 0 and self._vert(pts[i - 1], pts[i]):
+                    via_stack(c, a[0], a[1], vl(i - 1), "met2", pad=pad)
+                seg_h(c, a[1], a[0], b[0], "met2", hwidth)
+        pe = pts[-1]
+        last_i = len(pts) - 2
+        last_v = self._vert(pts[-2], pts[-1])
+        el = vl(last_i) if last_v else "met2"
+        if end != el:
+            via_stack(c, pe[0], pe[1], el, end, pad=pad)
+        else:
+            add_pad(c, el, pe[0], pe[1], pad)
+
+    def dest_side(self, x, y) -> str:
+        if x >= self.DIG_E - 4:
+            return "east"
+        if self.DIG_W < x < self.DIG_E and y >= self.DIG_N:
+            return "north"
+        if self.DIG_W < x < self.DIG_E and y <= self.DIG_S:
+            return "south"
+        return "other"
 
     def connect_south_analog(self, x0, y0, x1, y1, start="met3", end="met1"):
         """ua[0]/ua[1]: unique bottom Y + west X so the two analog pads never share a jog."""
-        c = self.cell
         yj = self.alloc_bot()
         xw = self.alloc_west()
-        via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
-        seg_v(c, x0, y0, yj, "met3")
-        via_stack(c, x0, yj, "met3", "met2")
-        seg_h(c, yj, x0, xw, "met2")
-        via_stack(c, xw, yj, "met2", "met3")
-        seg_v(c, xw, yj, y1, "met3")
-        via_stack(c, xw, y1, "met3", "met2")
-        seg_h(c, y1, xw, x1, "met2")
-        via_stack(c, x1, y1, "met2", end)
+        self.wire_ortho([(x0, y0), (x0, yj), (xw, yj), (xw, y1), (x1, y1)], start, end)
+
+    def _around_from_analog(self, xa, ya, xd, yd, start, end):
+        """Analog tap -> corridor west of digital -> top channel -> digital pin.
+
+        R-2R dac taps sit just under the S/H/comparator. They escape north into the
+        106–112 µm alley (unique Y / layer), then the 190–200 µm corridor (unique X /
+        layer), then over the digital macro. Last mile is vertical on unique pin X,
+        or unique east-X then horizontal on unique pin Y — never a shared dest-Y bar.
+        """
+        xc, c_layer = self.alloc_corr()
+        yj = self.alloc_jog()
+        if ya < 106.0:
+            y_al = self.alloc_alley()
+            pts = [(xa, ya), (xa, y_al), (xc, y_al)]
+            vlayers = ["met3", "met3", c_layer]
+        else:
+            ym = self.alloc_over()
+            pts = [(xa, ya), (xa, ym), (xc, ym)]
+            vlayers = ["met3", "met3", c_layer]
+        pts.append((xc, yj))
+        if self.dest_side(xd, yd) == "east":
+            xt, e_layer = self.alloc_east()
+            pts += [(xt, yj), (xt, yd), (xd, yd)]
+            vlayers += ["met3", e_layer, "met3"]
+        else:
+            pts += [(xd, yj), (xd, yd)]
+            vlayers += ["met3", "met3"]
+        self.wire_ortho(pts, start, end, vlayers=vlayers, hwidth=0.16)
 
     def connect(self, x0, y0, x1, y1, start="met3", end="met3"):
-        """Orthogonal path: met3 verticals + met2 horizontals + vias at corners."""
-        c = self.cell
+        """Orthogonal path: met3 verticals + met2 horizontals + unique tracks."""
         if abs(x0 - x1) < 0.2:
-            via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
-            seg_v(c, x0, y0, y1, "met3")
-            via_stack(c, x1, y1, "met3", end) if end != "met3" else add_pad(c, "met3", x1, y1)
+            self.wire_ortho([(x0, y0), (x0, y1)], start, end)
             return
         if abs(y0 - y1) < 0.2:
-            via_stack(c, x0, y0, "met2", start) if start != "met2" else add_pad(c, "met2", x0, y0)
-            seg_h(c, y0, x0, x1, "met2")
-            via_stack(c, x1, y1, "met2", end) if end != "met2" else add_pad(c, "met2", x1, y1)
+            self.wire_ortho([(x0, y0), (x1, y1)], start, end)
             return
-        yj = self.alloc_jog() if max(y0, y1) > 180 else (min(y0, y1) - 2.0 if min(y0, y1) > 16 else 10.0)
-        # Prefer east channel for destinations in the digital macro.
-        if x1 > 198 and x0 < 198:
-            xt = self.alloc_east()
-            via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
-            seg_v(c, x0, y0, yj, "met3")
-            via_stack(c, x0, yj, "met3", "met2")
-            seg_h(c, yj, x0, xt, "met2")
-            via_stack(c, xt, yj, "met2", "met3")
-            seg_v(c, xt, yj, y1, "met3")
-            via_stack(c, xt, y1, "met3", "met2")
-            seg_h(c, y1, xt, x1, "met2")
-            via_stack(c, x1, y1, "met2", end)
+        analog_to_dig = x0 < 190 and y0 < 175 and x1 > 198
+        dig_to_analog = x0 > 198 and x1 < 190 and y1 < 175
+        if analog_to_dig:
+            self._around_from_analog(x0, y0, x1, y1, start, end)
             return
-        via_stack(c, x0, y0, "met3", start) if start != "met3" else add_pad(c, "met3", x0, y0)
-        seg_v(c, x0, y0, yj, "met3")
-        via_stack(c, x0, yj, "met3", "met2")
-        seg_h(c, yj, x0, x1, "met2")
-        via_stack(c, x1, yj, "met2", "met3")
-        seg_v(c, x1, yj, y1, "met3")
-        via_stack(c, x1, y1, "met3", end) if end != "met3" else add_pad(c, "met3", x1, y1)
+        if dig_to_analog:
+            self._around_from_analog(x1, y1, x0, y0, end, start)
+            return
+        yj = self.alloc_jog()
+        if self.dest_side(x1, y1) == "east":
+            xt, e_layer = self.alloc_east()
+            self.wire_ortho(
+                [(x0, y0), (x0, yj), (xt, yj), (xt, y1), (x1, y1)],
+                start,
+                end,
+                vlayers=["met3", "met3", e_layer, "met3"],
+            )
+        else:
+            self.wire_ortho([(x0, y0), (x0, yj), (x1, yj), (x1, y1)], start, end)
 
 
 def escape_pin(cell, name, px, py, lx, ly, hx, hy) -> tuple[float, float]:

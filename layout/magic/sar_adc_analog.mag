@@ -1,6 +1,8 @@
 magic
 tech sky130A
-timestamp 1786860559
+timestamp 1786922891
+<< checkpaint >>
+rect -630 -630 18230 9580
 << metal1 >>
 rect 1200 16800 18000 16920
 rect 16800 16600 18000 16800
@@ -24,8 +26,20 @@ rect 16700 9400 17000 9800
 rect 1200 1320 2400 1400
 rect 1200 1200 18000 1320
 << metal2 >>
-rect 9200 12400 16000 12500
+rect 9200 12400 18100 12500
 rect 6200 11600 9200 11700
+use comparator  comparator_0
+timestamp 1786922883
+transform 1 0 0 0 1 0
+box 0 0 9600 5550
+use r2r_dac  r2r_dac_0
+timestamp 1786922891
+transform 1 0 0 0 1 0
+box 0 0 17600 8950
+use sample_hold  sample_hold_0
+timestamp 1786922882
+transform 1 0 0 0 1 0
+box 0 0 7000 4320
 << labels >>
 flabel metal1 1200 11600 1800 12200 1 FreeSans 240 0 0 0 vin_ecg
 port 1 n

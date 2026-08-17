@@ -1,0 +1,31 @@
+* NGSPICE file created from sample_hold.ext - technology: sky130A
+
+.subckt sky130_fd_pr__nfet_g5v0d10v5_YNEQJ5 a_50_n800# a_n108_n800# a_n50_n888# a_n242_n1022#
+X0 a_50_n800# a_n50_n888# a_n108_n800# a_n242_n1022# sky130_fd_pr__nfet_g5v0d10v5 ad=2.32 pd=16.6 as=2.32 ps=16.6 w=8 l=0.5
+.ends
+
+.subckt sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N a_50_n100# a_n242_n322# a_n108_n100# a_n50_n188#
+X0 a_50_n100# a_n50_n188# a_n108_n100# a_n242_n322# sky130_fd_pr__nfet_g5v0d10v5 ad=0.29 pd=2.58 as=0.29 ps=2.58 w=1 l=0.5
+.ends
+
+.subckt sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6 a_n50_n297# a_50_n200# w_n308_n497# a_n108_n200#
+X0 a_50_n200# a_n50_n297# a_n108_n200# w_n308_n497# sky130_fd_pr__pfet_g5v0d10v5 ad=0.58 pd=4.58 as=0.58 ps=4.58 w=2 l=0.5
+.ends
+
+.subckt sky130_fd_pr__pfet_g5v0d10v5_KLRLZ5 a_n50_n1697# a_50_n1600# w_n308_n1897#
++ a_n108_n1600#
+X0 a_50_n1600# a_n50_n1697# a_n108_n1600# w_n308_n1897# sky130_fd_pr__pfet_g5v0d10v5 ad=4.64 pd=32.6 as=4.64 ps=32.6 w=16 l=0.5
+.ends
+
+.subckt sky130_fd_pr__cap_mim_m3_1_BNHTNG c1_n2146_n2000# m3_n2186_n2040#
+X0 c1_n2146_n2000# m3_n2186_n2040# sky130_fd_pr__cap_mim_m3_1 l=20 w=20
+.ends
+
+.subckt sample_hold vin_ecg vhold sample_en avdd avss
+Xxn vhold vin_ecg sample_en avss sky130_fd_pr__nfet_g5v0d10v5_YNEQJ5
+Xxinvn m1_1860_5861# avss avss sample_en sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N
+Xxinvp sample_en m1_1860_5861# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6
+Xxp m1_1860_5861# vhold avdd vin_ecg sky130_fd_pr__pfet_g5v0d10v5_KLRLZ5
+Xxch vhold avss sky130_fd_pr__cap_mim_m3_1_BNHTNG
+.ends
+

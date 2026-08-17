@@ -12,3 +12,6 @@ layout/openlane/sar_adc_digital/runs/
 layout/magic/*.spice
 layout/magic/*.nodes
 *.ext
+/*.mag
+/*.ext
+/sky130_fd_pr__*.ext

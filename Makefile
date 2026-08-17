@@ -8,7 +8,7 @@ VVP      ?= vvp
 RTL      := rtl/rate_divider.v rtl/sar_fsm.v rtl/sar_adc_digital.v
 TB_DIR   := tb/rtl
 
-.PHONY: all rtl-test spice-test pdk-test waves mitbih layout-digital layout-analog layout-top gds tt-gds tt-magic lvs clean
+.PHONY: all rtl-test spice-test pdk-test waves mitbih layout-digital layout-analog analog-check layout-top gds tt-gds tt-magic lvs clean
 
 all: rtl-test
 
@@ -51,6 +51,10 @@ layout-digital:
 
 layout-analog:
 	bash layout/magic/run_magic.sh layout/magic/sar_adc_analog_gencell.tcl
+	$(PYTHON) layout/magic/punch_vias.py layout/gds/r2r_dac_magic.gds
+	$(PYTHON) layout/magic/punch_vias.py layout/gds/sample_hold_magic.gds
+	$(PYTHON) layout/magic/punch_vias.py layout/gds/comparator_magic.gds
+	$(PYTHON) layout/magic/punch_vias.py layout/gds/sar_adc_analog_magic.gds
 
 tt-magic:
 	bash layout/magic/run_magic.sh layout/magic/tt_tile.tcl
@@ -64,7 +68,10 @@ gds: layout-top tt-gds
 tt-gds:
 	$(PYTHON) layout/build_tt_gds.py
 
-lvs:
+analog-check:
+	bash layout/netgen/run_analog_lvs.sh
+
+lvs: analog-check
 	bash layout/netgen/run_lvs.sh
 
 clean:

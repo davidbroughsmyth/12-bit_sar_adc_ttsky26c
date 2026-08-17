@@ -1,0 +1,44 @@
+* NGSPICE file created from comparator.ext - technology: sky130A
+
+.subckt sky130_fd_pr__nfet_g5v0d10v5_MJGQJ3 a_n242_n622# a_50_n400# a_n108_n400# a_n50_n488#
+X0 a_50_n400# a_n50_n488# a_n108_n400# a_n242_n622# sky130_fd_pr__nfet_g5v0d10v5 ad=1.16 pd=8.58 as=1.16 ps=8.58 w=4 l=0.5
+.ends
+
+.subckt sky130_fd_pr__pfet_g5v0d10v5_KL3SY6 a_n50_n497# a_50_n400# w_n308_n697# a_n108_n400#
+X0 a_50_n400# a_n50_n497# a_n108_n400# w_n308_n697# sky130_fd_pr__pfet_g5v0d10v5 ad=1.16 pd=8.58 as=1.16 ps=8.58 w=4 l=0.5
+.ends
+
+.subckt sky130_fd_pr__nfet_g5v0d10v5_WSEQJ8 a_50_n200# a_n242_n422# a_n108_n200# a_n50_n288#
+X0 a_50_n200# a_n50_n288# a_n108_n200# a_n242_n422# sky130_fd_pr__nfet_g5v0d10v5 ad=0.58 pd=4.58 as=0.58 ps=4.58 w=2 l=0.5
+.ends
+
+.subckt sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N a_50_n100# a_n242_n322# a_n108_n100# a_n50_n188#
+X0 a_50_n100# a_n50_n188# a_n108_n100# a_n242_n322# sky130_fd_pr__nfet_g5v0d10v5 ad=0.29 pd=2.58 as=0.29 ps=2.58 w=1 l=0.5
+.ends
+
+.subckt sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6 a_n50_n297# a_50_n200# w_n308_n497# a_n108_n200#
+X0 a_50_n200# a_n50_n297# a_n108_n200# w_n308_n497# sky130_fd_pr__pfet_g5v0d10v5 ad=0.58 pd=4.58 as=0.58 ps=4.58 w=2 l=0.5
+.ends
+
+.subckt sky130_fd_pr__nfet_g5v0d10v5_YNEQJ5 a_50_n800# a_n108_n800# a_n50_n888# a_n242_n1022#
+X0 a_50_n800# a_n50_n888# a_n108_n800# a_n242_n1022# sky130_fd_pr__nfet_g5v0d10v5 ad=2.32 pd=16.6 as=2.32 ps=16.6 w=8 l=0.5
+.ends
+
+.subckt comparator inp inn clk comp_p avdd avss
+Xx1 avss m1_2660_4161# m1_2502_4161# inp sky130_fd_pr__nfet_g5v0d10v5_MJGQJ3
+Xx3 m1_2581_7426# m1_2660_4161# avdd m1_1860_9370# sky130_fd_pr__pfet_g5v0d10v5_KL3SY6
+Xx2 avss m1_2581_7426# m1_2502_4161# inn sky130_fd_pr__nfet_g5v0d10v5_MJGQJ3
+Xx4 m1_2660_4161# m1_2581_7426# avdd m1_7302_6970# sky130_fd_pr__pfet_g5v0d10v5_KL3SY6
+Xx5 clk m1_1860_9370# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KL3SY6
+Xx6 clk m1_7302_6970# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KL3SY6
+Xxpb m1_14260_3961# comp_p avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KL3SY6
+Xxnb comp_p avss avss m1_14260_3961# sky130_fd_pr__nfet_g5v0d10v5_WSEQJ8
+Xxpq m1_2660_4161# m1_14260_3961# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KL3SY6
+Xxinvn m1_4581_9426# avss avss clk sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N
+Xxinvp clk m1_4581_9426# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6
+Xxnq m1_14260_3961# avss avss m1_2660_4161# sky130_fd_pr__nfet_g5v0d10v5_WSEQJ8
+Xxtail m1_2502_4161# avss clk avss sky130_fd_pr__nfet_g5v0d10v5_YNEQJ5
+Xxr1 m1_4581_9426# m1_2660_4161# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6
+Xxr2 m1_4581_9426# m1_2581_7426# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6
+.ends
+

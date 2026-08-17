@@ -1,0 +1,190 @@
+
+Circuit 1 cell sky130_fd_pr__nfet_g5v0d10v5 and Circuit 2 cell sky130_fd_pr__nfet_g5v0d10v5 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_g5v0d10v5 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_g5v0d10v5 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_g5v0d10v5    |Circuit 2: sky130_fd_pr__nfet_g5v0d10v5    
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_g5v0d10v5 and sky130_fd_pr__nfet_g5v0d10v5 are equivalent.
+
+Circuit 1 cell sky130_fd_pr__pfet_g5v0d10v5 and Circuit 2 cell sky130_fd_pr__pfet_g5v0d10v5 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_g5v0d10v5 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_g5v0d10v5 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__pfet_g5v0d10v5    |Circuit 2: sky130_fd_pr__pfet_g5v0d10v5    
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__pfet_g5v0d10v5 and sky130_fd_pr__pfet_g5v0d10v5 are equivalent.
+
+Circuit 1 cell sky130_fd_pr__res_xhigh_po_0p35 and Circuit 2 cell sky130_fd_pr__res_xhigh_po_0p35 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__res_xhigh_po_0p35 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__res_xhigh_po_0p35 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__res_xhigh_po_0p35 |Circuit 2: sky130_fd_pr__res_xhigh_po_0p35 
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__res_xhigh_po_0p35 and sky130_fd_pr__res_xhigh_po_0p35 are equivalent.
+Flattening unmatched subcell sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N in circuit r2r_dac (0)(12 instances)
+Flattening unmatched subcell sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6 in circuit r2r_dac (0)(12 instances)
+Flattening unmatched subcell sky130_fd_pr__pfet_g5v0d10v5_KL3SY6 in circuit r2r_dac (0)(24 instances)
+Flattening unmatched subcell sky130_fd_pr__res_xhigh_po_0p35_K8ELGS in circuit r2r_dac (0)(12 instances)
+Flattening unmatched subcell sky130_fd_pr__res_xhigh_po_0p35_N7NBSG in circuit r2r_dac (0)(13 instances)
+Flattening unmatched subcell sky130_fd_pr__nfet_g5v0d10v5_WSEQJ8 in circuit r2r_dac (0)(24 instances)
+
+Subcircuit summary:
+Circuit 1: r2r_dac                         |Circuit 2: r2r_dac_sky130                  
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__nfet_g5v0d10v5 (36)          |sky130_fd_pr__nfet_g5v0d10v5 (36)          
+sky130_fd_pr__pfet_g5v0d10v5 (36)          |sky130_fd_pr__pfet_g5v0d10v5 (36)          
+sky130_fd_pr__res_xhigh_po_0p35 (25)       |sky130_fd_pr__res_xhigh_po_0p35 (25)       
+Number of devices: 97                      |Number of devices: 97                      
+Number of nets: 52                         |Number of nets: 52                         
+---------------------------------------------------------------------------------------
+Netlists match uniquely with property errors.
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:xt/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:t:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:xt/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:t:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser10/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:1011:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser10/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:1011:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser1/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:12:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser1/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:12:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser8/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:89:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser8/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:89:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser3/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:34:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser3/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:34:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser6/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:67:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser6/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:67:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser5/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:56:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser5/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:56:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser4/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:45:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser4/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:45:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser7/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:78:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser7/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:78:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser2/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:23:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser2/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:23:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser9/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:910:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser9/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:910:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser0/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:01:
+ l circuit1: 7.84   circuit2: 8   (delta=2.02%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser0/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:01:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh0/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:20:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh0/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:20:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh11/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:211:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh11/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:211:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh1/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:21:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh1/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:21:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh9/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:29:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh9/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:29:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh3/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:23b:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh3/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:23b:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh7/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:27:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh7/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:27:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh5/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:25:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh5/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:25:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh6/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:26:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh6/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:26:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh4/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:24:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh4/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:24:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh8/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:28:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh8/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:28:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh2/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:22:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh2/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:22:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh10/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:210:
+ l circuit1: 15.8   circuit2: 16   (delta=1.26%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_N7NBSG:rsh10/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:210:
+Property W in circuit2 has no matching property in circuit1
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser11/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:out:
+ l circuit1: 7.84   circuit2: 0.35   (delta=183%, cutoff=1%)
+sky130_fd_pr__res_xhigh_po_0p35_K8ELGS:rser11/sky130_fd_pr__res_xhigh_po_0p35:0 vs. sky130_fd_pr__res_xhigh_po_0p35:out:
+Property W in circuit2 has no matching property in circuit1
+
+Subcircuit pins:
+Circuit 1: r2r_dac                         |Circuit 2: r2r_dac_sky130                  
+-------------------------------------------|-------------------------------------------
+vout                                       |vout                                       
+vref                                       |vref                                       
+avdd                                       |avdd                                       
+avss                                       |avss                                       
+dac0                                       |dac0                                       
+dac2                                       |dac2                                       
+dac8                                       |dac8                                       
+dac4                                       |dac4                                       
+dac6                                       |dac6                                       
+dac5                                       |dac5                                       
+dac7                                       |dac7                                       
+dac3                                       |dac3                                       
+dac9                                       |dac9                                       
+dac1                                       |dac1                                       
+dac10                                      |dac10                                      
+dac11                                      |dac11                                      
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes r2r_dac and r2r_dac_sky130 are equivalent.
+
+Final result: Circuits match uniquely.
+Property errors were found.
+
+The following cells had property errors:
+ r2r_dac
