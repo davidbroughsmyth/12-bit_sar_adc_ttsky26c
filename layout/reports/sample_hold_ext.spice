@@ -23,9 +23,9 @@ X0 c1_n2146_n2000# m3_n2186_n2040# sky130_fd_pr__cap_mim_m3_1 l=20 w=20
 
 .subckt sample_hold vin_ecg vhold sample_en avdd avss
 Xxn vhold vin_ecg sample_en avss sky130_fd_pr__nfet_g5v0d10v5_YNEQJ5
-Xxinvn m1_1860_5861# avss avss sample_en sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N
-Xxinvp sample_en m1_1860_5861# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6
-Xxp m1_1860_5861# vhold avdd vin_ecg sky130_fd_pr__pfet_g5v0d10v5_KLRLZ5
+Xxinvn m1_1856_5857# avss avss sample_en sky130_fd_pr__nfet_g5v0d10v5_UNEQ2N
+Xxinvp sample_en m1_1856_5857# avdd avdd sky130_fd_pr__pfet_g5v0d10v5_KLD8Y6
+Xxp m1_1856_5857# vhold avdd vin_ecg sky130_fd_pr__pfet_g5v0d10v5_KLRLZ5
 Xxch vhold avss sky130_fd_pr__cap_mim_m3_1_BNHTNG
 .ends
 
